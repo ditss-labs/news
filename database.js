@@ -925,7 +925,7 @@ export {
     MongoDB,
     JsonDB,
     dataBase,
-    DatabaseStructure,
+   // DatabaseStructure,
     cmdAdd,
     cmdDel,
     cmdAddHit,
