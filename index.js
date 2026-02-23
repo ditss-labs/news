@@ -1,7 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { dataBase } from './database.js';
+import chalk from 'chalk';
+import { dataBase, DatabaseStructure } from './database.js';
 
 dotenv.config();
 
@@ -23,81 +24,116 @@ global.db = null;
 // Inisialisasi database
 async function initDatabase() {
     try {
+        console.log(chalk.blue('🔄 Initializing database...'));
+        
         // Koneksi ke MongoDB
         if (database.isMongoDB()) {
             await database.connect();
         }
         
         // Baca data
-        const loadData = await database.read();
+        let loadData = await database.read();
+        
+        console.log(chalk.cyan(`📦 Database loaded: ${Object.keys(loadData).join(', ')}`));
         
         if (!loadData || Object.keys(loadData).length === 0) {
+            // Buat database baru dengan struktur lengkap
             global.db = {
-                hit: {},
+                hit: { totalcmd: 0, todaycmd: 0 },
                 set: {},
                 stats: {},
                 cmd: {},
                 store: {},
                 users: {},
-                game: {},
+                game: JSON.parse(JSON.stringify(DatabaseStructure.game)),
                 groups: {},
                 database: {},
                 premium: [],
                 sewa: [],
                 settings: {
                     maintenance: false,
-                    version: '1.0.0'
+                    version: '2.0.0'
                 }
             };
             await database.write(global.db);
-            console.log('✅ Database baru dibuat!');
+            console.log(chalk.green('✅ Database baru dibuat!'));
         } else {
+            // Merge dengan struktur default untuk memastikan semua field ada
             global.db = {
-                hit: loadData.hit || {},
+                hit: loadData.hit || { totalcmd: 0, todaycmd: 0 },
                 set: loadData.set || {},
                 stats: loadData.stats || {},
                 cmd: loadData.cmd || {},
                 store: loadData.store || {},
                 users: loadData.users || {},
-                game: loadData.game || {},
+                game: { ...DatabaseStructure.game, ...(loadData.game || {}) },
                 groups: loadData.groups || {},
                 database: loadData.database || {},
-                premium: loadData.premium || [],
-                sewa: loadData.sewa || [],
+                premium: Array.isArray(loadData.premium) ? loadData.premium : [],
+                sewa: Array.isArray(loadData.sewa) ? loadData.sewa : [],
                 settings: loadData.settings || {
                     maintenance: false,
-                    version: '1.0.0'
+                    version: '2.0.0'
                 }
             };
-            console.log('✅ Database loaded!');
+            
+            console.log(chalk.green('✅ Database loaded!'));
+            console.log(chalk.yellow(`📊 Stats: ${Object.keys(global.db.users).length} users, ${Object.keys(global.db.groups).length} groups, ${global.db.premium.length} premium`));
+        }
+
+        // Setup real-time updates jika MongoDB
+        if (database.isMongoDB()) {
+            database.addListener((type, data) => {
+                if (type === 'change' || type === 'write') {
+                    // Update global.db dengan data terbaru
+                    global.db = data;
+                    console.log(chalk.yellow('🔄 Database updated real-time'));
+                }
+            });
+        } else {
+            // Untuk JSON DB, gunakan polling
+            database.startWatching((type, data) => {
+                if (type === 'poll' || type === 'write') {
+                    global.db = data;
+                    console.log(chalk.yellow('🔄 Database updated via polling'));
+                }
+            });
         }
 
         // Auto save setiap 30 detik
         setInterval(async () => {
             if (global.db) {
                 await database.write(global.db);
-                console.log('💾 Database auto-saved');
+                console.log(chalk.gray('💾 Database auto-saved'));
             }
         }, 30000);
 
     } catch (e) {
-        console.error('❌ Database error:', e);
+        console.error(chalk.red('❌ Database error:'), e);
         process.exit(1);
     }
 }
 
-// Routes
+// ==================== API ROUTES ====================
+
+// Home
 app.get('/', (req, res) => {
     res.json({
         status: 'success',
-        message: 'API Database Bot WhatsApp',
-        version: global.db?.settings?.version || '1.0.0',
+        message: 'Asuma Bot Database API',
+        version: global.db?.settings?.version || '2.0.0',
+        stats: {
+            users: Object.keys(global.db?.users || {}).length,
+            groups: Object.keys(global.db?.groups || {}).length,
+            premium: global.db?.premium?.length || 0,
+            sewa: global.db?.sewa?.length || 0
+        },
         timestamp: new Date().toISOString()
     });
 });
 
-// Get all data
-app.get('/api/db', async (req, res) => {
+// Get all database
+app.get('/api/db', (req, res) => {
     try {
         res.json({
             status: 'success',
@@ -112,7 +148,7 @@ app.get('/api/db', async (req, res) => {
 });
 
 // Get specific collection
-app.get('/api/db/:collection', async (req, res) => {
+app.get('/api/db/:collection', (req, res) => {
     try {
         const { collection } = req.params;
         
@@ -126,6 +162,7 @@ app.get('/api/db/:collection', async (req, res) => {
         res.json({
             status: 'success',
             collection,
+            count: Array.isArray(global.db[collection]) ? global.db[collection].length : Object.keys(global.db[collection]).length,
             data: global.db[collection]
         });
     } catch (error) {
@@ -136,100 +173,18 @@ app.get('/api/db/:collection', async (req, res) => {
     }
 });
 
-// Update specific collection
-app.post('/api/db/:collection', async (req, res) => {
+// Get user by JID
+app.get('/api/users/:jid', (req, res) => {
     try {
-        const { collection } = req.params;
-        const updateData = req.body;
+        const { jid } = req.params;
+        const user = global.db.users?.[jid];
         
-        if (!global.db[collection]) {
-            global.db[collection] = {};
-        }
-        
-        // Merge data
-        global.db[collection] = {
-            ...global.db[collection],
-            ...updateData
-        };
-        
-        // Simpan ke database
-        await database.write(global.db);
-        
-        res.json({
-            status: 'success',
-            message: `Collection '${collection}' updated`,
-            data: global.db[collection]
-        });
-    } catch (error) {
-        res.status(500).json({
-            status: 'error',
-            message: error.message
-        });
-    }
-});
-
-// Update specific field in collection
-app.put('/api/db/:collection/:field', async (req, res) => {
-    try {
-        const { collection, field } = req.params;
-        const { value } = req.body;
-        
-        if (!global.db[collection]) {
-            global.db[collection] = {};
-        }
-        
-        global.db[collection][field] = value;
-        
-        // Simpan ke database
-        await database.write(global.db);
-        
-        res.json({
-            status: 'success',
-            message: `Field '${field}' in '${collection}' updated`,
-            data: { [field]: global.db[collection][field] }
-        });
-    } catch (error) {
-        res.status(500).json({
-            status: 'error',
-            message: error.message
-        });
-    }
-});
-
-// Delete collection
-app.delete('/api/db/:collection', async (req, res) => {
-    try {
-        const { collection } = req.params;
-        
-        if (global.db[collection]) {
-            delete global.db[collection];
-            
-            // Simpan ke database
-            await database.write(global.db);
-            
-            res.json({
-                status: 'success',
-                message: `Collection '${collection}' deleted`
-            });
-        } else {
-            res.status(404).json({
+        if (!user) {
+            return res.status(404).json({
                 status: 'error',
-                message: `Collection '${collection}' not found`
+                message: `User ${jid} not found`
             });
         }
-    } catch (error) {
-        res.status(500).json({
-            status: 'error',
-            message: error.message
-        });
-    }
-});
-
-// Users endpoints
-app.get('/api/users/:number', async (req, res) => {
-    try {
-        const { number } = req.params;
-        const user = global.db.users?.[number] || null;
         
         res.json({
             status: 'success',
@@ -243,26 +198,49 @@ app.get('/api/users/:number', async (req, res) => {
     }
 });
 
-app.post('/api/users/:number', async (req, res) => {
+// Update user
+app.post('/api/users/:jid', async (req, res) => {
     try {
-        const { number } = req.params;
-        const userData = req.body;
+        const { jid } = req.params;
+        const updateData = req.body;
         
         if (!global.db.users) {
             global.db.users = {};
         }
         
-        global.db.users[number] = {
-            ...global.db.users[number],
-            ...userData,
-            lastUpdate: new Date().toISOString()
+        if (!global.db.users[jid]) {
+            // Buat user baru dengan struktur lengkap
+            const newUser = JSON.parse(JSON.stringify(DatabaseStructure.user));
+            newUser._id = jid;
+            newUser.jid = jid;
+            newUser.profile.name = updateData.profile?.name || 'User';
+            newUser.account.registrationDate = Date.now();
+            newUser.timestamps.createdAt = Date.now();
+            global.db.users[jid] = newUser;
+        }
+        
+        // Merge update data
+        const mergeDeep = (target, source) => {
+            for (const key in source) {
+                if (source[key] && typeof source[key] === 'object' && !Array.isArray(source[key])) {
+                    if (!target[key]) target[key] = {};
+                    mergeDeep(target[key], source[key]);
+                } else {
+                    target[key] = source[key];
+                }
+            }
         };
         
+        mergeDeep(global.db.users[jid], updateData);
+        global.db.users[jid].timestamps.updatedAt = Date.now();
+        
+        // Simpan ke database
         await database.write(global.db);
         
         res.json({
             status: 'success',
-            data: global.db.users[number]
+            message: 'User updated',
+            data: global.db.users[jid]
         });
     } catch (error) {
         res.status(500).json({
@@ -272,11 +250,18 @@ app.post('/api/users/:number', async (req, res) => {
     }
 });
 
-// Groups endpoints
-app.get('/api/groups/:groupId', async (req, res) => {
+// Get group by ID
+app.get('/api/groups/:groupId', (req, res) => {
     try {
         const { groupId } = req.params;
-        const group = global.db.groups?.find(g => g.id === groupId) || null;
+        const group = global.db.groups?.[groupId];
+        
+        if (!group) {
+            return res.status(404).json({
+                status: 'error',
+                message: `Group ${groupId} not found`
+            });
+        }
         
         res.json({
             status: 'success',
@@ -290,11 +275,12 @@ app.get('/api/groups/:groupId', async (req, res) => {
     }
 });
 
-// Premium endpoints
-app.get('/api/premium/list', async (req, res) => {
+// Premium list
+app.get('/api/premium', (req, res) => {
     try {
         res.json({
             status: 'success',
+            count: global.db.premium?.length || 0,
             data: global.db.premium || []
         });
     } catch (error) {
@@ -305,14 +291,15 @@ app.get('/api/premium/list', async (req, res) => {
     }
 });
 
+// Add premium
 app.post('/api/premium/add', async (req, res) => {
     try {
-        const { id, expired } = req.body;
+        const { jid, duration } = req.body;
         
-        if (!id || !expired) {
+        if (!jid || !duration) {
             return res.status(400).json({
                 status: 'error',
-                message: 'ID and expired are required'
+                message: 'JID and duration required'
             });
         }
         
@@ -320,21 +307,21 @@ app.post('/api/premium/add', async (req, res) => {
             global.db.premium = [];
         }
         
-        const existing = global.db.premium.find(p => p.id === id);
-        if (existing) {
-            existing.expired = Date.now() + toMs(expired);
-        } else {
-            global.db.premium.push({
-                id,
-                expired: Date.now() + toMs(expired)
-            });
+        if (!global.db.premium.includes(jid)) {
+            global.db.premium.push(jid);
+        }
+        
+        // Update user premium status if exists
+        if (global.db.users[jid]) {
+            global.db.users[jid].account.premium.isPremium = true;
+            global.db.users[jid].account.premium.expiryDate = Date.now() + toMs(duration);
         }
         
         await database.write(global.db);
         
         res.json({
             status: 'success',
-            message: 'Premium added/updated',
+            message: 'Premium added',
             data: global.db.premium
         });
     } catch (error) {
@@ -345,23 +332,8 @@ app.post('/api/premium/add', async (req, res) => {
     }
 });
 
-// Sewa endpoints
-app.get('/api/sewa/list', async (req, res) => {
-    try {
-        res.json({
-            status: 'success',
-            data: global.db.sewa || []
-        });
-    } catch (error) {
-        res.status(500).json({
-            status: 'error',
-            message: error.message
-        });
-    }
-});
-
-// Settings endpoints
-app.get('/api/settings', async (req, res) => {
+// Settings
+app.get('/api/settings', (req, res) => {
     try {
         res.json({
             status: 'success',
@@ -375,15 +347,16 @@ app.get('/api/settings', async (req, res) => {
     }
 });
 
+// Update settings
 app.post('/api/settings', async (req, res) => {
     try {
         const settings = req.body;
         
-        global.db.settings = {
-            ...global.db.settings,
-            ...settings
-        };
+        if (!global.db.settings) {
+            global.db.settings = {};
+        }
         
+        Object.assign(global.db.settings, settings);
         await database.write(global.db);
         
         res.json({
@@ -398,41 +371,17 @@ app.post('/api/settings', async (req, res) => {
     }
 });
 
-// Maintenance mode toggle
-app.post('/api/maintenance', async (req, res) => {
-    try {
-        const { enabled } = req.body;
-        
-        if (!global.db.settings) {
-            global.db.settings = {};
-        }
-        
-        global.db.settings.maintenance = enabled === true;
-        
-        await database.write(global.db);
-        
-        res.json({
-            status: 'success',
-            maintenance: global.db.settings.maintenance
-        });
-    } catch (error) {
-        res.status(500).json({
-            status: 'error',
-            message: error.message
-        });
-    }
-});
-
-// Stats endpoints
-app.get('/api/stats', async (req, res) => {
+// Stats
+app.get('/api/stats', (req, res) => {
     try {
         const stats = {
-            totalUsers: Object.keys(global.db.users || {}).length,
-            totalGroups: (global.db.groups || []).length,
-            totalPremium: (global.db.premium || []).length,
-            totalSewa: (global.db.sewa || []).length,
+            users: Object.keys(global.db.users || {}).length,
+            groups: Object.keys(global.db.groups || {}).length,
+            premium: global.db.premium?.length || 0,
+            sewa: global.db.sewa?.length || 0,
             totalCommands: global.db.hit?.totalcmd || 0,
             todayCommands: global.db.hit?.todaycmd || 0,
+            games: Object.keys(global.db.game || {}).length,
             lastUpdate: new Date().toISOString()
         };
         
@@ -452,10 +401,9 @@ app.get('/api/stats', async (req, res) => {
 app.post('/api/save', async (req, res) => {
     try {
         await database.write(global.db);
-        
         res.json({
             status: 'success',
-            message: 'Database saved manually',
+            message: 'Database saved',
             timestamp: new Date().toISOString()
         });
     } catch (error) {
@@ -470,21 +418,7 @@ app.post('/api/save', async (req, res) => {
 app.post('/api/refresh', async (req, res) => {
     try {
         const freshData = await database.read();
-        
-        global.db = {
-            hit: freshData.hit || {},
-            set: freshData.set || {},
-            stats: freshData.stats || {},
-            cmd: freshData.cmd || {},
-            store: freshData.store || {},
-            users: freshData.users || {},
-            game: freshData.game || {},
-            groups: freshData.groups || {},
-            database: freshData.database || {},
-            premium: freshData.premium || [],
-            sewa: freshData.sewa || [],
-            settings: freshData.settings || global.db.settings || {}
-        };
+        global.db = freshData;
         
         res.json({
             status: 'success',
@@ -499,9 +433,40 @@ app.post('/api/refresh', async (req, res) => {
     }
 });
 
+// Debug: lihat struktur user
+app.get('/api/debug/user-structure/:jid?', (req, res) => {
+    try {
+        const { jid } = req.params;
+        
+        if (jid && global.db.users[jid]) {
+            res.json({
+                status: 'success',
+                data: {
+                    structure: Object.keys(global.db.users[jid]),
+                    sample: global.db.users[jid]
+                }
+            });
+        } else {
+            res.json({
+                status: 'success',
+                data: {
+                    defaultStructure: Object.keys(DatabaseStructure.user),
+                    sampleUser: jid ? null : 'No JID provided',
+                    note: 'Send JID to see specific user structure'
+                }
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            status: 'error',
+            message: error.message
+        });
+    }
+});
+
 // Error handler
 app.use((err, req, res, next) => {
-    console.error('Server error:', err);
+    console.error(chalk.red('Server error:'), err);
     res.status(500).json({
         status: 'error',
         message: err.message
@@ -521,9 +486,11 @@ async function startServer() {
     await initDatabase();
     
     app.listen(PORT, () => {
-        console.log(`🚀 Server running on port ${PORT}`);
-        console.log(`📝 API Documentation: http://localhost:${PORT}`);
-        console.log(`💾 Database: ${database.isMongoDB() ? 'MongoDB' : 'JSON'}`);
+        console.log(chalk.green(`\n🚀 Server running on port ${PORT}`));
+        console.log(chalk.cyan(`📝 API: http://localhost:${PORT}`));
+        console.log(chalk.yellow(`💾 Database: ${database.isMongoDB() ? 'MongoDB' : 'JSON'}`));
+        console.log(chalk.magenta(`📊 Users: ${Object.keys(global.db?.users || {}).length}`));
+        console.log(chalk.magenta(`👥 Groups: ${Object.keys(global.db?.groups || {}).length}`));
     });
 }
 
