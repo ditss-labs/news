@@ -4,6 +4,126 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import dotenv from 'dotenv';
 import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import chalk from 'chalk';
+
+dotenv.config();
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'views')));
+
+// Database connection
+try {
+    await mongoose.connect(process.env.MONGODB_URI, {
+        dbName: process.env.DB_NAME || 'asuma_bot'
+    });
+    console.log(chalk.green('✅ MongoDB connected'));
+} catch (err) {
+    console.error(chalk.red('❌ MongoDB connection error:'), err);
+    process.exit(1);
+}
+
+// ============================================
+// AUTO-REGISTER ALL ROUTES (SUPPORT NESTED FOLDERS)
+// ============================================
+const ROUTES_DIR = path.join(__dirname, 'routes');
+
+/**
+ * Fungsi rekursif untuk membaca semua file .js dalam folder
+ * @param {string} dir - Directory path
+ * @param {string} baseRoute - Base route prefix (untuk nested folder)
+ */
+async function loadRoutes(dir, baseRoute = '') {
+    const items = fs.readdirSync(dir);
+    
+    for (const item of items) {
+        const fullPath = path.join(dir, item);
+        const stat = fs.statSync(fullPath);
+        
+        if (stat.isDirectory()) {
+            // Rekursif ke subfolder, tambah prefix route
+            await loadRoutes(fullPath, `${baseRoute}/${item}`);
+        } else if (item.endsWith('.js')) {
+            // Hanya file .js yang di-load
+            try {
+                // Dapatkan relative path dari folder routes
+                const relativePath = path.relative(ROUTES_DIR, fullPath);
+                const routePath = relativePath
+                    .replace(/\\/g, '/') // Ganti backslash ke slash (Windows)
+                    .replace(/\.js$/, ''); // Hapus .js
+                
+                // Import module
+                const routeModule = await import(`file://${fullPath}`);
+                
+                // Cek apakah module memiliki default export function
+                if (typeof routeModule.default === 'function') {
+                    routeModule.default(app);
+                    
+                    // Tampilkan log dengan indentation
+                    const indent = '   '.repeat(routePath.split('/').length - 1);
+                    console.log(chalk.green(`${indent}✅ ${routePath}`));
+                } else {
+                    console.log(chalk.yellow(`   ⚠️  ${routePath} (missing default export)`));
+                }
+            } catch (error) {
+                console.log(chalk.red(`   ❌ ${item}: ${error.message}`));
+            }
+        }
+    }
+}
+
+console.log(chalk.blue('\n📁 Loading routes...'));
+
+// Mulai load dari folder routes
+await loadRoutes(ROUTES_DIR);
+
+console.log(chalk.blue('📁 Routes loaded successfully!\n'));
+
+// ============================================
+// ERROR HANDLERS
+// ============================================
+app.use((req, res) => {
+    res.status(404).json({
+        status: 'error',
+        message: 'Endpoint not found'
+    });
+});
+
+app.use((err, req, res, next) => {
+    console.error(chalk.red('Server error:'), err);
+    res.status(500).json({
+        status: 'error',
+        message: err.message
+    });
+});
+
+// ============================================
+// START SERVER
+// ============================================
+app.listen(PORT, () => {
+    console.log(chalk.green(`\n🚀 Server running on port ${PORT}`));
+    console.log(chalk.cyan(`📝 API: http://localhost:${PORT}`));
+});
+
+
+
+/*
+import express from 'express';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import dotenv from 'dotenv';
+import path from 'path';
 import { fileURLToPath } from 'url';
 import chalk from 'chalk'; // Install: npm install chalk
 
@@ -233,4 +353,4 @@ async function startServer() {
   });
 }
 
-startServer().catch(console.error);
+startServer().catch(console.error); */
