@@ -13,23 +13,40 @@ export const login = async (req, res) => {
       });
     }
     
-    // Cari user berdasarkan nomor telepon (jid)
+    // Format JID
     const jid = phone.includes('@s.whatsapp.net') ? phone : `${phone}@s.whatsapp.net`;
     const user = await User.findById(jid);
     
     if (!user) {
       return res.status(404).json({ 
         success: false, 
-        message: 'User not found' 
+        message: 'User not found. Please register via WhatsApp first.' 
       });
     }
     
-    // Cek password
+    // Check if user has password
+    if (!user.profile.password) {
+      return res.status(401).json({ 
+        success: false, 
+        message: 'No password set. Please register via WhatsApp first.' 
+      });
+    }
+    
+    // Verify password
     const isValid = await bcrypt.compare(password, user.profile.password);
     if (!isValid) {
       return res.status(401).json({ 
         success: false, 
         message: 'Invalid password' 
+      });
+    }
+    
+    // Check JWT_SECRET
+    if (!process.env.JWT_SECRET) {
+      console.error('JWT_SECRET is not defined in .env file');
+      return res.status(500).json({ 
+        success: false, 
+        message: 'Server configuration error' 
       });
     }
     
@@ -47,20 +64,27 @@ export const login = async (req, res) => {
     // Set cookie
     res.cookie('token', token, {
       httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 hari
-      secure: process.env.NODE_ENV === 'production'
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax'
     });
     
     res.json({
       success: true,
       message: 'Login successful',
+      token, // Send token for localStorage
       user: {
         jid: user._id,
         phone: user._id.split('@')[0],
-        name: user.profile.name,
-        level: user.account.level,
-        money: user.economy.currencies.money,
-        avatar: user.profile.avatar
+        name: user.profile.name || 'User',
+        level: user.account.level || 1,
+        exp: user.account.exp || 0,
+        nextLevelExp: user.account.nextLevelExp || 100,
+        money: user.economy?.currencies?.money || 0,
+        bank: user.economy?.currencies?.bank || 0,
+        crystals: user.economy?.currencies?.crystals || 0,
+        avatar: user.profile.avatar || '',
+        registered: user.account.registered || false
       }
     });
     
@@ -68,7 +92,7 @@ export const login = async (req, res) => {
     console.error('Login error:', error);
     res.status(500).json({ 
       success: false, 
-      message: 'Internal server error' 
+      message: 'Internal server error: ' + error.message 
     });
   }
 };
@@ -94,15 +118,15 @@ export const me = async (req, res) => {
       user: {
         jid: user._id,
         phone: user._id.split('@')[0],
-        name: user.profile.name,
-        level: user.account.level,
-        exp: user.account.exp,
-        nextLevelExp: user.account.nextLevelExp,
-        money: user.economy.currencies.money,
-        bank: user.economy.currencies.bank,
-        crystals: user.economy.currencies.crystals,
-        avatar: user.profile.avatar,
-        registered: user.account.registered
+        name: user.profile.name || 'User',
+        level: user.account.level || 1,
+        exp: user.account.exp || 0,
+        nextLevelExp: user.account.nextLevelExp || 100,
+        money: user.economy?.currencies?.money || 0,
+        bank: user.economy?.currencies?.bank || 0,
+        crystals: user.economy?.currencies?.crystals || 0,
+        avatar: user.profile.avatar || '',
+        registered: user.account.registered || false
       }
     });
     
