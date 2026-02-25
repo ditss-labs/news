@@ -20,12 +20,8 @@ export const getProfile = async (req, res) => {
         name: user.profile.name,
         nickname: user.profile.nickname,
         bio: user.profile.bio,
-        age: user.profile.age,
-        gender: user.profile.gender,
-        location: user.profile.location,
         avatar: user.profile.avatar,
         level: user.account.level,
-        exp: user.account.exp,
         title: user.account.title,
         registered: user.account.registered,
         registrationDate: user.account.registrationDate
@@ -44,7 +40,7 @@ export const getProfile = async (req, res) => {
 export const updateProfile = async (req, res) => {
   try {
     const { jid } = req.user;
-    const updates = req.body;
+    const { nickname, bio, avatar } = req.body;
     
     const user = await User.findById(jid);
     
@@ -55,19 +51,24 @@ export const updateProfile = async (req, res) => {
       });
     }
     
-    // Update profile fields
-    if (updates.name) user.profile.name = updates.name;
-    if (updates.nickname) user.profile.nickname = updates.nickname;
-    if (updates.bio) user.profile.bio = updates.bio;
-    if (updates.age) user.profile.age = updates.age;
-    if (updates.gender) user.profile.gender = updates.gender;
-    if (updates.avatar) user.profile.avatar = updates.avatar;
+    // Update hanya field yang dikirim
+    if (nickname !== undefined) user.profile.nickname = nickname;
+    if (bio !== undefined) user.profile.bio = bio;
+    if (avatar !== undefined) user.profile.avatar = avatar;
+    
+    // Update timestamp
+    user.timestamps.updatedAt = Date.now();
     
     await user.save();
     
     res.json({
       success: true,
-      message: 'Profile updated successfully'
+      message: 'Profile updated successfully',
+      profile: {
+        nickname: user.profile.nickname,
+        bio: user.profile.bio,
+        avatar: user.profile.avatar
+      }
     });
     
   } catch (error) {
