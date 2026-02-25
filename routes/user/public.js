@@ -6,7 +6,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default (app) => {
-    app.get('/u/:nickname', async (req, res) => {
+    app.get('/api/u/:nickname', async (req, res) => {
         try {
             const { nickname } = req.params;
           //  const User = (await import('../../models/User.js')).default;
