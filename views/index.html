@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asuma Bot - Website</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 400px;
+            padding: 40px;
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+            font-size: 14px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        button {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+        
+        .register-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .success {
+            color: #27ae60;
+            font-size: 14px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        
+        .dashboard {
+            display: none;
+        }
+        
+        .user-info {
+            background: #f7f7f7;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+        
+        .user-info p {
+            margin: 10px 0;
+            color: #555;
+        }
+        
+        .user-info strong {
+            color: #333;
+        }
+        
+        .logout-btn {
+            background: #e74c3c;
+            margin-top: 20px;
+        }
+        
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Asuma Bot</h1>
+        <p class="subtitle">Login dengan nomor WhatsApp</p>
+        
+        <!-- Login Form -->
+        <div id="loginForm">
+            <div class="form-group">
+                <label>Nomor WhatsApp</label>
+                <input type="text" id="phone" placeholder="6281234567890" value="447920601019">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="password" placeholder="********">
+            </div>
+            <button onclick="login()">Login</button>
+            <div class="register-link">
+                Belum punya akun? <a href="#">Register via WhatsApp</a>
+            </div>
+            <div id="message"></div>
+        </div>
+        
+        <!-- Dashboard (hidden by default) -->
+        <div id="dashboard" class="dashboard">
+            <h2>Dashboard</h2>
+            <div class="user-info" id="userInfo">
+                <p><strong>Nama:</strong> <span id="userName">-</span></p>
+                <p><strong>Level:</strong> <span id="userLevel">-</span></p>
+                <p><strong>Exp:</strong> <span id="userExp">-</span></p>
+                <p><strong>Money:</strong> Rp <span id="userMoney">-</span></p>
+                <p><strong>Bank:</strong> Rp <span id="userBank">-</span></p>
+                <p><strong>Crystals:</strong> <span id="userCrystals">-</span></p>
+            </div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+            <div id="dashboardMessage"></div>
+        </div>
+    </div>
+    
+    <script>
+        let token = localStorage.getItem('token') || '';
+        
+        // Check if already logged in
+        if (token) {
+            checkAuth();
+        }
+        
+        async function login() {
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const messageDiv = document.getElementById('message');
+            
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, password })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    localStorage.setItem('token', data.token || '');
+                    token = data.token || '';
+                    messageDiv.className = 'success';
+                    messageDiv.textContent = 'Login berhasil!';
+                    showDashboard(data.user);
+                } else {
+                    messageDiv.className = 'error';
+                    messageDiv.textContent = data.message;
+                }
+            } catch (error) {
+                messageDiv.className = 'error';
+                messageDiv.textContent = 'Error: ' + error.message;
+            }
+        }
+        
+        async function checkAuth() {
+            try {
+                const res = await fetch('/api/auth/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    showDashboard(data.user);
+                }
+            } catch (error) {
+                console.error('Auth check failed:', error);
+            }
+        }
+        
+        function showDashboard(user) {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            
+            document.getElementById('userName').textContent = user.name || '-';
+            document.getElementById('userLevel').textContent = user.level || 0;
+            document.getElementById('userExp').textContent = `${user.exp || 0}/${user.nextLevelExp || 100}`;
+            document.getElementById('userMoney').textContent = (user.money || 0).toLocaleString();
+            document.getElementById('userBank').textContent = (user.bank || 0).toLocaleString();
+            document.getElementById('userCrystals').textContent = user.crystals || 0;
+        }
+        
+        function logout() {
+            localStorage.removeItem('token');
+            token = '';
+            document.getElementById('loginForm').style.display = 'block';
+            document.getElementById('dashboard').style.display = 'none';
+            document.getElementById('phone').value = '';
+            document.getElementById('password').value = '';
+        }
+    </script>
+</body>
+</html>
