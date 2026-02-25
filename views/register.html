@@ -1,222 +1,1472 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register - Asuma Bot</title>
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui,sans-serif; }
-    body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
-    .container { background:white; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.3); width:100%; max-width:400px; padding:40px; }
-    h1 { color:#333; text-align:center; margin-bottom:10px; font-size:28px; }
-    .subtitle { text-align:center; color:#666; margin-bottom:30px; font-size:14px; }
-    .form-group { margin-bottom:20px; }
-    label { display:block; margin-bottom:8px; color:#555; font-weight:500; font-size:14px; }
-    input { width:100%; padding:12px 15px; border:2px solid #e0e0e0; border-radius:10px; font-size:16px; transition:border 0.3s; }
-    input:focus { outline:none; border-color:#667eea; }
-    button { width:100%; padding:14px; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white; border:none; border-radius:10px; font-size:16px; font-weight:600; cursor:pointer; transition:transform 0.2s; margin-top:10px; }
-    button:hover { transform:translateY(-2px); }
-    button:disabled { opacity:0.5; cursor:not-allowed; }
-    .login-link { text-align:center; margin-top:20px; font-size:14px; }
-    .login-link a { color:#667eea; text-decoration:none; font-weight:600; }
-    .login-link a:hover { text-decoration:underline; }
-    .message { margin-top:15px; padding:10px; border-radius:5px; text-align:center; font-size:14px; }
-    .error { background:#fee; color:#e74c3c; }
-    .success { background:#e8f8f0; color:#27ae60; }
-    .step { display:none; }
-    .step.active { display:block; }
-    .timer { text-align:center; font-size:14px; color:#666; margin-top:10px; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Register - ASUMA Bot</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #8b5cf6;
+            --accent: #10b981;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            --gradient-shine: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 40px -8px rgba(0, 0, 0, 0.2);
+            --shadow-xl: 0 30px 60px -10px rgba(99, 102, 241, 0.3);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .bg-blob {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border-radius: 50%;
+            filter: blur(60px);
+            animation: blobMove 20s infinite ease-in-out;
+        }
+
+        .blob1 {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            left: -100px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
+            animation-delay: 0s;
+        }
+
+        .blob2 {
+            width: 500px;
+            height: 500px;
+            bottom: -150px;
+            right: -100px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(168, 85, 247, 0.15));
+            animation-delay: -5s;
+        }
+
+        .blob3 {
+            width: 300px;
+            height: 300px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(16, 185, 129, 0.1);
+            animation-delay: -10s;
+        }
+
+        @keyframes blobMove {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(50px, -30px) scale(1.1); }
+            66% { transform: translate(-30px, 50px) scale(0.9); }
+        }
+
+        /* Floating Orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .orb1 {
+            width: 150px;
+            height: 150px;
+            top: 10%;
+            right: 5%;
+            background: radial-gradient(circle at 30% 30%, rgba(99, 102, 241, 0.2), transparent 70%);
+            animation: float 15s infinite;
+        }
+
+        .orb2 {
+            width: 200px;
+            height: 200px;
+            bottom: 10%;
+            left: 5%;
+            background: radial-gradient(circle at 70% 70%, rgba(139, 92, 246, 0.2), transparent 70%);
+            animation: float 18s infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(40px, -30px) rotate(5deg); }
+            50% { transform: translate(20px, 40px) rotate(-5deg); }
+            75% { transform: translate(-30px, 20px) rotate(3deg); }
+        }
+
+        /* Particles */
+        .particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: particleFloat 10s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            from { transform: translateY(100vh) rotate(0deg); }
+            to { transform: translateY(-100vh) rotate(360deg); }
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 460px;
+            margin: 0 auto;
+        }
+
+        /* Glass Card Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.02),
+                inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            padding: 32px 28px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: cardAppear 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 40px 80px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                inset 0 1px 2px rgba(255, 255, 255, 0.15);
+        }
+
+        @keyframes cardAppear {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo-wrapper {
+            display: inline-flex;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .logo-glow {
+            position: absolute;
+            inset: -20px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.3), transparent 70%);
+            border-radius: 50%;
+            filter: blur(20px);
+            animation: pulseGlow 3s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.2); }
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 15px 30px -5px rgba(99, 102, 241, 0.5),
+                0 0 0 2px rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            animation: rotateLogo 20s infinite linear;
+        }
+
+        @keyframes rotateLogo {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .logo i {
+            font-size: 36px;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            animation: iconFloat 3s infinite ease-in-out;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--gray);
+            font-size: 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .subtitle i {
+            color: var(--primary-light);
+            font-size: 14px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #10b981;
+            margin-left: 8px;
+        }
+
+        /* Steps Indicator */
+        .steps-indicator {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 32px;
+        }
+
+        .step-dot {
+            width: 40px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-dot.active {
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            width: 60px;
+        }
+
+        .step-dot.completed {
+            background: #10b981;
+        }
+
+        .step-dot::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient-shine);
+            animation: shine 2s infinite;
+        }
+
+        @keyframes shine {
+            to { left: 100%; }
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cbd5e1;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.3px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            color: var(--gray);
+            font-size: 16px;
+            transition: color 0.3s ease;
+            z-index: 1;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px 16px 16px 48px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            font-size: 15px;
+            font-weight: 500;
+            color: white;
+            transition: all 0.3s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 400;
+        }
+
+        input:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
+
+        input:focus + .input-icon {
+            color: #6366f1;
+        }
+
+        /* OTP Input Specific */
+        .otp-input {
+            font-size: 24px;
+            letter-spacing: 8px;
+            text-align: center;
+            font-weight: 700;
+            padding: 16px;
+        }
+
+        /* Password Toggle */
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 8px;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .password-toggle:hover {
+            color: #6366f1;
+            transform: scale(1.1);
+        }
+
+        /* Password Strength */
+        .password-strength {
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .strength-bar {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .strength-text {
+            font-size: 12px;
+            color: var(--gray);
+            min-width: 60px;
+        }
+
+        /* Timer */
+        .timer {
+            text-align: center;
+            font-size: 14px;
+            color: var(--gray);
+            margin: 16px 0;
+            padding: 12px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            font-weight: 500;
+        }
+
+        .timer i {
+            margin-right: 6px;
+            color: #f59e0b;
+        }
+
+        .timer a {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 700;
+            margin-left: 8px;
+        }
+
+        .timer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Button */
+        .btn-primary {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+            margin-top: 16px;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .btn-primary:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 30px -5px rgba(99, 102, 241, 0.5);
+        }
+
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-icon {
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .btn-primary:hover:not(:disabled) .btn-icon {
+            transform: translateX(5px);
+        }
+
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Links */
+        .login-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .login-link a {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 700;
+            padding: 4px 8px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .login-link a:hover {
+            background: rgba(99, 102, 241, 0.1);
+            text-decoration: none;
+        }
+
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 16px;
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            padding: 8px;
+            border-radius: 12px;
+        }
+
+        .back-link i {
+            margin-right: 6px;
+            transition: transform 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .back-link:hover i {
+            transform: translateX(-3px);
+        }
+
+        /* Message Toast */
+        .message-container {
+            margin-top: 20px;
+        }
+
+        .message {
+            padding: 16px 20px;
+            border-radius: 16px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            animation: messageSlide 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .message i {
+            font-size: 16px;
+        }
+
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #6ee7b7;
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .info {
+            background: rgba(59, 130, 246, 0.1);
+            color: #93c5fd;
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Steps Content */
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            animation: stepFade 0.5s ease;
+        }
+
+        @keyframes stepFade {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .quick-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 18px;
+        }
+
+        .quick-btn:hover {
+            background: rgba(99, 102, 241, 0.15);
+            color: white;
+            transform: translateY(-3px);
+            border-color: #6366f1;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 24px;
+            text-align: center;
+            color: var(--gray);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--primary-light);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 4px 20px;
+            z-index: 100;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            border-radius: 16px;
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-item.active {
+            color: white;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .nav-item.active i {
+            color: #6366f1;
+            transform: translateY(-2px);
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            border-radius: 0 0 4px 4px;
+            animation: navGlow 2s infinite;
+        }
+
+        @keyframes navGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .nav-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 30px;
+            border: 2px solid rgba(15, 23, 42, 0.9);
+            animation: pulse 2s infinite;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .glass-card {
+                padding: 24px 20px;
+                border-radius: 28px;
+                margin-bottom: 80px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .logo {
+                width: 70px;
+                height: 70px;
+            }
+
+            .logo i {
+                font-size: 32px;
+            }
+
+            .bottom-nav {
+                padding-bottom: 16px;
+            }
+
+            .nav-item {
+                font-size: 11px;
+                padding: 6px 8px;
+            }
+
+            .nav-item i {
+                font-size: 18px;
+            }
+
+            .step-dot {
+                width: 30px;
+            }
+
+            .step-dot.active {
+                width: 50px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .glass-card {
+                padding: 20px 16px;
+            }
+        }
+
+        /* Animations */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .shake {
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* Hide number input arrows */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>📝 Register</h1>
-    <p class="subtitle">Daftar akun baru</p>
-
-    <div id="step1" class="step active">
-      <div class="form-group">
-        <label>Nomor WhatsApp</label>
-        <input type="text" id="phone" placeholder="6281234567890">
-      </div>
-      <button onclick="sendOTP()" id="sendBtn">Kirim OTP</button>
-      <div class="login-link">
-        Sudah punya akun? <a href="/login">Login</a>
-      </div>
-      <div id="message1" class="message"></div>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="bg-blob blob1"></div>
+        <div class="bg-blob blob2"></div>
+        <div class="bg-blob blob3"></div>
     </div>
 
-    <div id="step2" class="step">
-      <div class="form-group">
-        <label>Kode OTP</label>
-        <input type="text" id="otp" placeholder="123456" maxlength="6">
-      </div>
-      <button onclick="verifyOTP()" id="verifyBtn">Verifikasi</button>
-      <div class="timer" id="timer"></div>
-      <div id="message2" class="message"></div>
-      <a href="#" onclick="resetToStep1()" style="display:block; text-align:center; margin-top:15px; color:#666; text-decoration:none;">← Ganti nomor</a>
+    <!-- Floating Orbs -->
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+
+    <!-- Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="glass-card">
+            <!-- Header -->
+            <div class="header">
+                <div class="logo-wrapper">
+                    <div class="logo-glow"></div>
+                    <div class="logo">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                </div>
+                <h1>Buat Akun Baru</h1>
+                <div class="subtitle">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Daftar ke ASUMA Bot</span>
+                    <span class="badge">
+                        <i class="fas fa-lock"></i>
+                        Secure
+                    </span>
+                </div>
+            </div>
+
+            <!-- Steps Indicator -->
+            <div class="steps-indicator">
+                <div class="step-dot active" id="step1-dot"></div>
+                <div class="step-dot" id="step2-dot"></div>
+                <div class="step-dot" id="step3-dot"></div>
+            </div>
+
+            <!-- Step 1: Phone Number -->
+            <div id="step1" class="step active">
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-phone-alt" style="margin-right: 6px;"></i>
+                        Nomor WhatsApp
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-phone-alt input-icon"></i>
+                        <input 
+                            type="text" 
+                            id="phone" 
+                            placeholder="6281234567890"
+                            autocomplete="off"
+                        >
+                    </div>
+                    <p class="timer" style="margin-top: 12px; display: none;">
+                        <i class="fas fa-info-circle"></i>
+                        Format: 628xxxx (tanpa + atau spasi)
+                    </p>
+                </div>
+
+                <button class="btn-primary" onclick="sendOTP()" id="sendBtn">
+                    <span>Kirim Kode OTP</span>
+                    <i class="fas fa-paper-plane btn-icon"></i>
+                </button>
+
+                <div class="login-link">
+                    Sudah punya akun? <a href="/login">Login</a>
+                </div>
+
+                <div class="message-container">
+                    <div id="message1" class="message" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Step 2: OTP Verification -->
+            <div id="step2" class="step">
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-key" style="margin-right: 6px;"></i>
+                        Kode OTP (6 digit)
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input 
+                            type="text" 
+                            id="otp" 
+                            placeholder="123456" 
+                            maxlength="6"
+                            class="otp-input"
+                            autocomplete="off"
+                        >
+                    </div>
+                </div>
+
+                <div class="timer" id="timer"></div>
+
+                <button class="btn-primary" onclick="verifyOTP()" id="verifyBtn">
+                    <span>Verifikasi Kode</span>
+                    <i class="fas fa-check-circle btn-icon"></i>
+                </button>
+
+                <a href="#" onclick="resetToStep1()" class="back-link">
+                    <i class="fas fa-arrow-left"></i>
+                    Ganti nomor telepon
+                </a>
+
+                <div class="message-container">
+                    <div id="message2" class="message" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Step 3: Create Password -->
+            <div id="step3" class="step">
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-lock" style="margin-right: 6px;"></i>
+                        Buat Password
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input 
+                            type="password" 
+                            id="newPassword" 
+                            placeholder="Minimal 6 karakter"
+                            autocomplete="new-password"
+                        >
+                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                            <i class="far fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+
+                    <!-- Password Strength Indicator -->
+                    <div class="password-strength" id="passwordStrength" style="display: none;">
+                        <div class="strength-bar">
+                            <div class="strength-fill" id="strengthFill"></div>
+                        </div>
+                        <span class="strength-text" id="strengthText">Kekuatan</span>
+                    </div>
+                </div>
+
+                <button class="btn-primary" onclick="setPassword()" id="setPassBtn">
+                    <span>Daftar Sekarang</span>
+                    <i class="fas fa-user-check btn-icon"></i>
+                </button>
+
+                <div class="message-container">
+                    <div id="message3" class="message" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <a href="#" class="quick-btn" title="Bantuan">
+                    <i class="fas fa-question"></i>
+                </a>
+                <a href="#" class="quick-btn" title="FAQ">
+                    <i class="fas fa-info"></i>
+                </a>
+                <a href="#" class="quick-btn" title="Kontak">
+                    <i class="fas fa-envelope"></i>
+                </a>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>© 2024 ASUMA Bot. All rights reserved.</p>
+                <p style="margin-top: 6px;">
+                    <a href="#">Privacy</a> • <a href="#">Terms</a> • <a href="#">Security</a>
+                </p>
+            </div>
+        </div>
     </div>
 
-    <div id="step3" class="step">
-      <div class="form-group">
-        <label>Buat Password</label>
-        <input type="password" id="newPassword" placeholder="Minimal 6 karakter">
-      </div>
-      <button onclick="setPassword()" id="setPassBtn">Daftar</button>
-      <div id="message3" class="message"></div>
-    </div>
-  </div>
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="/" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="/dashboard" class="nav-item">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="/create" class="nav-item">
+            <i class="fas fa-plus-circle"></i>
+            <span>Create</span>
+        </a>
+        <a href="/analytics" class="nav-item active">
+            <i class="fas fa-chart-line"></i>
+            <span>Analytics</span>
+            <span class="nav-badge">3</span>
+        </a>
+        <a href="/profile" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
 
-  <script>
-    let phoneNumber = '';
-    let timerInterval;
-    let timeLeft = 300;
+    <script>
+        // ORIGINAL REGISTRATION FUNCTIONS - JANGAN DIUBAH!
+        let phoneNumber = '';
+        let timerInterval;
+        let timeLeft = 300;
 
-    async function sendOTP() {
-      const phone = document.getElementById('phone').value;
-      const btn = document.getElementById('sendBtn');
-      const msg = document.getElementById('message1');
-      if (!phone) {
-        msg.className = 'message error';
-        msg.textContent = 'Masukkan nomor telepon';
-        return;
-      }
-      btn.disabled = true;
-      msg.className = 'message';
-      msg.textContent = 'Mengirim OTP...';
-      try {
-        const res = await fetch('/api/otp/send', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone })
+        // Function to create particles (optional visual)
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            if (!particlesContainer) return;
+            
+            const particleCount = 30;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.opacity = Math.random() * 0.5;
+                particle.style.width = Math.random() * 3 + 1 + 'px';
+                particle.style.height = particle.style.width;
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Update steps indicator
+        function updateSteps(step) {
+            const step1 = document.getElementById('step1-dot');
+            const step2 = document.getElementById('step2-dot');
+            const step3 = document.getElementById('step3-dot');
+            
+            // Reset all
+            step1.classList.remove('active', 'completed');
+            step2.classList.remove('active', 'completed');
+            step3.classList.remove('active', 'completed');
+            
+            if (step === 1) {
+                step1.classList.add('active');
+            } else if (step === 2) {
+                step1.classList.add('completed');
+                step2.classList.add('active');
+            } else if (step === 3) {
+                step1.classList.add('completed');
+                step2.classList.add('completed');
+                step3.classList.add('active');
+            }
+        }
+
+        // Toggle password visibility (added visual feature)
+        function togglePassword() {
+            const passwordInput = document.getElementById('newPassword');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.className = 'far fa-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.className = 'far fa-eye';
+            }
+        }
+
+        // Password strength indicator (added visual feature)
+        function checkPasswordStrength() {
+            const password = document.getElementById('newPassword').value;
+            const strengthDiv = document.getElementById('passwordStrength');
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            
+            if (password.length > 0) {
+                strengthDiv.style.display = 'flex';
+                
+                let strength = 0;
+                if (password.length >= 6) strength += 25;
+                if (password.length >= 8) strength += 25;
+                if (/[A-Z]/.test(password)) strength += 25;
+                if (/[0-9]/.test(password)) strength += 25;
+                if (/[^A-Za-z0-9]/.test(password)) strength += 25;
+                
+                strength = Math.min(strength, 100);
+                strengthFill.style.width = strength + '%';
+                
+                if (strength < 25) strengthText.textContent = 'Lemah';
+                else if (strength < 50) strengthText.textContent = 'Sedang';
+                else if (strength < 75) strengthText.textContent = 'Kuat';
+                else strengthText.textContent = 'Sangat Kuat';
+            } else {
+                strengthDiv.style.display = 'none';
+            }
+        }
+
+        // Show message helper (visual enhancement)
+        function showMessage(elementId, text, type = 'error') {
+            const msgDiv = document.getElementById(elementId);
+            if (!msgDiv) return;
+            
+            msgDiv.style.display = 'flex';
+            msgDiv.className = `message ${type}`;
+            
+            let icon = '';
+            if (type === 'error') icon = 'fa-exclamation-circle';
+            else if (type === 'success') icon = 'fa-check-circle';
+            else icon = 'fa-info-circle';
+            
+            msgDiv.innerHTML = `<i class="fas ${icon}"></i> ${text}`;
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                msgDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // ORIGINAL FUNCTIONS - JANGAN DIUBAH!
+        async function sendOTP() {
+            const phone = document.getElementById('phone').value;
+            const btn = document.getElementById('sendBtn');
+            const msg = document.getElementById('message1');
+            
+            if (!phone) {
+                showMessage('message1', 'Masukkan nomor telepon', 'error');
+                document.querySelector('.glass-card').classList.add('shake');
+                setTimeout(() => {
+                    document.querySelector('.glass-card').classList.remove('shake');
+                }, 500);
+                return;
+            }
+            
+            // Show loading
+            btn.disabled = true;
+            btn.innerHTML = `
+                <div class="loading-spinner"></div>
+                <span>Mengirim OTP...</span>
+            `;
+            
+            msg.style.display = 'none';
+            
+            try {
+                const res = await fetch('/api/otp/send', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    phoneNumber = phone;
+                    document.getElementById('step1').classList.remove('active');
+                    document.getElementById('step2').classList.add('active');
+                    updateSteps(2);
+                    startTimer(300);
+                    showMessage('message2', 'OTP sedang dikirim. Cek WhatsApp Anda.', 'success');
+                } else {
+                    showMessage('message1', data.message, 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = `
+                        <span>Kirim Kode OTP</span>
+                        <i class="fas fa-paper-plane btn-icon"></i>
+                    `;
+                }
+            } catch (error) {
+                showMessage('message1', 'Error: ' + error.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = `
+                    <span>Kirim Kode OTP</span>
+                    <i class="fas fa-paper-plane btn-icon"></i>
+                `;
+            }
+        }
+
+        async function verifyOTP() {
+            const otp = document.getElementById('otp').value;
+            const btn = document.getElementById('verifyBtn');
+            const msg = document.getElementById('message2');
+            
+            if (!otp || otp.length !== 6) {
+                showMessage('message2', 'Masukkan 6 digit OTP', 'error');
+                return;
+            }
+            
+            // Show loading
+            btn.disabled = true;
+            btn.innerHTML = `
+                <div class="loading-spinner"></div>
+                <span>Memverifikasi...</span>
+            `;
+            
+            msg.style.display = 'none';
+            
+            try {
+                const res = await fetch('/api/otp/verify', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: phoneNumber, otp })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    clearInterval(timerInterval);
+                    document.getElementById('step2').classList.remove('active');
+                    document.getElementById('step3').classList.add('active');
+                    updateSteps(3);
+                    showMessage('message3', 'OTP benar. Silakan buat password.', 'success');
+                } else {
+                    showMessage('message2', data.message, 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = `
+                        <span>Verifikasi Kode</span>
+                        <i class="fas fa-check-circle btn-icon"></i>
+                    `;
+                }
+            } catch (error) {
+                showMessage('message2', 'Error: ' + error.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = `
+                    <span>Verifikasi Kode</span>
+                    <i class="fas fa-check-circle btn-icon"></i>
+                `;
+            }
+        }
+
+        async function setPassword() {
+            const password = document.getElementById('newPassword').value;
+            const btn = document.getElementById('setPassBtn');
+            const msg = document.getElementById('message3');
+            
+            if (!password || password.length < 6) {
+                showMessage('message3', 'Password minimal 6 karakter', 'error');
+                return;
+            }
+            
+            // Show loading
+            btn.disabled = true;
+            btn.innerHTML = `
+                <div class="loading-spinner"></div>
+                <span>Menyimpan...</span>
+            `;
+            
+            msg.style.display = 'none';
+            
+            try {
+                const res = await fetch('/api/auth/set-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: phoneNumber, password })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    showMessage('message3', 'Registrasi berhasil! Mengalihkan...', 'success');
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 1500);
+                } else {
+                    showMessage('message3', data.message, 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = `
+                        <span>Daftar Sekarang</span>
+                        <i class="fas fa-user-check btn-icon"></i>
+                    `;
+                }
+            } catch (error) {
+                showMessage('message3', 'Error: ' + error.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = `
+                    <span>Daftar Sekarang</span>
+                    <i class="fas fa-user-check btn-icon"></i>
+                `;
+            }
+        }
+
+        function startTimer(seconds) {
+            timeLeft = seconds;
+            updateTimer();
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimer();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('timer').innerHTML = `
+                        <i class="fas fa-hourglass-end"></i>
+                        OTP expired. 
+                        <a href="#" onclick="resendOTP()">Kirim ulang</a>
+                    `;
+                }
+            }, 1000);
+        }
+
+        function updateTimer() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').innerHTML = `
+                <i class="fas fa-hourglass-half"></i>
+                Sisa waktu: ${minutes}:${seconds.toString().padStart(2, '0')}
+            `;
+        }
+
+        async function resendOTP() {
+            clearInterval(timerInterval);
+            document.getElementById('verifyBtn').disabled = false;
+            document.getElementById('verifyBtn').innerHTML = `
+                <span>Verifikasi Kode</span>
+                <i class="fas fa-check-circle btn-icon"></i>
+            `;
+            await sendOTP();
+        }
+
+        function resetToStep1() {
+            clearInterval(timerInterval);
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step1').classList.add('active');
+            updateSteps(1);
+            document.getElementById('phone').value = '';
+            document.getElementById('sendBtn').disabled = false;
+            document.getElementById('sendBtn').innerHTML = `
+                <span>Kirim Kode OTP</span>
+                <i class="fas fa-paper-plane btn-icon"></i>
+            `;
+            document.getElementById('message1').style.display = 'none';
+            document.getElementById('message2').style.display = 'none';
+        }
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            
+            // Format phone input (only numbers)
+            document.getElementById('phone').addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+            
+            // Format OTP input (only numbers)
+            document.getElementById('otp').addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '').slice(0, 6);
+            });
+            
+            // Password strength checker
+            document.getElementById('newPassword').addEventListener('input', checkPasswordStrength);
+            
+            // Enter key submission
+            document.getElementById('phone').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') sendOTP();
+            });
+            
+            document.getElementById('otp').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') verifyOTP();
+            });
+            
+            document.getElementById('newPassword').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') setPassword();
+            });
+            
+            // Set active nav based on current path
+            const path = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (path === href || (path === '/' && href === '/')) {
+                    item.classList.add('active');
+                } else if (path.startsWith(href) && href !== '/') {
+                    item.classList.add('active');
+                }
+            });
         });
-        const data = await res.json();
-        if (data.success) {
-          phoneNumber = phone;
-          document.getElementById('step1').classList.remove('active');
-          document.getElementById('step2').classList.add('active');
-          startTimer(300);
-          msg.className = 'message success';
-          msg.textContent = 'OTP sedang dikirim. Cek WhatsApp Anda.';
-        } else {
-          msg.className = 'message error';
-          msg.textContent = data.message;
-          btn.disabled = false;
-        }
-      } catch (error) {
-        msg.className = 'message error';
-        msg.textContent = 'Error: ' + error.message;
-        btn.disabled = false;
-      }
-    }
-
-    async function verifyOTP() {
-      const otp = document.getElementById('otp').value;
-      const btn = document.getElementById('verifyBtn');
-      const msg = document.getElementById('message2');
-      if (!otp || otp.length !== 6) {
-        msg.className = 'message error';
-        msg.textContent = 'Masukkan 6 digit OTP';
-        return;
-      }
-      btn.disabled = true;
-      msg.className = 'message';
-      msg.textContent = 'Memverifikasi...';
-      try {
-        const res = await fetch('/api/otp/verify', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone: phoneNumber, otp })
-        });
-        const data = await res.json();
-        if (data.success) {
-          clearInterval(timerInterval);
-          document.getElementById('step2').classList.remove('active');
-          document.getElementById('step3').classList.add('active');
-          msg.className = 'message success';
-          msg.textContent = 'OTP benar. Silakan buat password.';
-        } else {
-          msg.className = 'message error';
-          msg.textContent = data.message;
-          btn.disabled = false;
-        }
-      } catch (error) {
-        msg.className = 'message error';
-        msg.textContent = 'Error: ' + error.message;
-        btn.disabled = false;
-      }
-    }
-
-    async function setPassword() {
-      const password = document.getElementById('newPassword').value;
-      const btn = document.getElementById('setPassBtn');
-      const msg = document.getElementById('message3');
-      if (!password || password.length < 6) {
-        msg.className = 'message error';
-        msg.textContent = 'Password minimal 6 karakter';
-        return;
-      }
-      btn.disabled = true;
-      msg.className = 'message';
-      msg.textContent = 'Menyimpan...';
-      try {
-        const res = await fetch('/api/auth/set-password', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone: phoneNumber, password })
-        });
-        const data = await res.json();
-        if (data.success) {
-          msg.className = 'message success';
-          msg.textContent = 'Registrasi berhasil! Mengalihkan...';
-          setTimeout(() => {
-            window.location.href = '/login';
-          }, 1500);
-        } else {
-          msg.className = 'message error';
-          msg.textContent = data.message;
-          btn.disabled = false;
-        }
-      } catch (error) {
-        msg.className = 'message error';
-        msg.textContent = 'Error: ' + error.message;
-        btn.disabled = false;
-      }
-    }
-
-    function startTimer(seconds) {
-      timeLeft = seconds;
-      updateTimer();
-      timerInterval = setInterval(() => {
-        timeLeft--;
-        updateTimer();
-        if (timeLeft <= 0) {
-          clearInterval(timerInterval);
-          document.getElementById('timer').innerHTML = '⏰ OTP expired. <a href="#" onclick="resendOTP()">Kirim ulang</a>';
-        }
-      }, 1000);
-    }
-
-    function updateTimer() {
-      const minutes = Math.floor(timeLeft / 60);
-      const seconds = timeLeft % 60;
-      document.getElementById('timer').innerHTML = `⏱️ Sisa waktu: ${minutes}:${seconds.toString().padStart(2, '0')}`;
-    }
-
-    async function resendOTP() {
-      clearInterval(timerInterval);
-      document.getElementById('verifyBtn').disabled = false;
-      await sendOTP();
-    }
-
-    function resetToStep1() {
-      clearInterval(timerInterval);
-      document.getElementById('step2').classList.remove('active');
-      document.getElementById('step1').classList.add('active');
-      document.getElementById('phone').value = '';
-      document.getElementById('sendBtn').disabled = false;
-      document.getElementById('message1').className = 'message';
-      document.getElementById('message1').textContent = '';
-    }
-  </script>
+    </script>
 </body>
 </html>
