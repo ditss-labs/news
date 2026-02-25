@@ -18,14 +18,15 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 20px;
         }
         
         .container {
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            width: 90%;
-            max-width: 400px;
+            width: 100%;
+            max-width: 500px;
             padding: 40px;
         }
         
@@ -55,7 +56,7 @@
             font-size: 14px;
         }
         
-        input {
+        input, textarea {
             width: 100%;
             padding: 12px 15px;
             border: 2px solid #e0e0e0;
@@ -64,7 +65,12 @@
             transition: border 0.3s;
         }
         
-        input:focus {
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        input:focus, textarea:focus {
             outline: none;
             border-color: #667eea;
         }
@@ -84,6 +90,11 @@
         
         button:hover {
             transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
         
         .register-link {
@@ -136,6 +147,54 @@
             color: #333;
         }
         
+        .avatar-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 40px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            border: 3px solid white;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .edit-profile-btn {
+            background: #3498db;
+            margin-top: 20px;
+        }
+        
+        .edit-profile-form {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f0f0f0;
+            border-radius: 10px;
+        }
+        
+        .cancel-btn {
+            background: #95a5a6;
+            margin-top: 10px;
+        }
+        
         .logout-btn {
             background: #e74c3c;
             margin-top: 20px;
@@ -143,6 +202,51 @@
         
         .logout-btn:hover {
             background: #c0392b;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin: 15px 0;
+        }
+        
+        .info-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .profile-url {
+            background: #e8f4fd;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 14px;
+            text-align: center;
+        }
+        
+        .profile-url a {
+            color: #2980b9;
+            text-decoration: none;
+        }
+        
+        .profile-url a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -155,7 +259,7 @@
         <div id="loginForm">
             <div class="form-group">
                 <label>Nomor WhatsApp</label>
-                <input type="text" id="phone" placeholder="6281234567890" value="447920601019">
+                <input type="text" id="phone" placeholder="6281234567890">
             </div>
             <div class="form-group">
                 <label>Password</label>
@@ -163,22 +267,77 @@
             </div>
             <button onclick="login()">Login</button>
             <div class="register-link">
-                Belum punya akun? <a href="#">Register via WhatsApp</a>
+                Belum punya akun? <a href="#" onclick="alert('Register via WhatsApp dengan command .register')">Register via WhatsApp</a>
             </div>
             <div id="message"></div>
         </div>
         
-        <!-- Dashboard (hidden by default) -->
+        <!-- Dashboard -->
         <div id="dashboard" class="dashboard">
-            <h2>Dashboard</h2>
-            <div class="user-info" id="userInfo">
-                <p><strong>Nama:</strong> <span id="userName">-</span></p>
-                <p><strong>Level:</strong> <span id="userLevel">-</span></p>
-                <p><strong>Exp:</strong> <span id="userExp">-</span></p>
-                <p><strong>Money:</strong> Rp <span id="userMoney">-</span></p>
-                <p><strong>Bank:</strong> Rp <span id="userBank">-</span></p>
-                <p><strong>Crystals:</strong> <span id="userCrystals">-</span></p>
+            <div class="avatar-section">
+                <div class="avatar" id="avatar">👤</div>
+                <h2 id="displayName">-</h2>
+                <div class="profile-url" id="profileUrl"></div>
             </div>
+            
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-label">Level</div>
+                    <div class="info-value" id="level">0</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Exp</div>
+                    <div class="info-value" id="exp">0/100</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Money</div>
+                    <div class="info-value" id="money">Rp 0</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Bank</div>
+                    <div class="info-value" id="bank">Rp 0</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Crystals</div>
+                    <div class="info-value" id="crystals">0</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">Title</div>
+                    <div class="info-value" id="title">-</div>
+                </div>
+            </div>
+            
+            <div class="user-info">
+                <p><strong>Bio:</strong> <span id="bio">-</span></p>
+                <p><strong>Nickname:</strong> <span id="nickname">-</span></p>
+                <p><strong>Last Active:</strong> <span id="lastActive">-</span></p>
+                <p><strong>Registered:</strong> <span id="registeredDate">-</span></p>
+            </div>
+            
+            <!-- Edit Profile Button -->
+            <button class="edit-profile-btn" onclick="showEditForm()">Edit Profile</button>
+            
+            <!-- Edit Profile Form -->
+            <div id="editForm" class="edit-profile-form">
+                <h3 style="margin-bottom: 15px;">Edit Profile</h3>
+                <div class="form-group">
+                    <label>Nickname</label>
+                    <input type="text" id="editNickname" placeholder="Nickname">
+                </div>
+                <div class="form-group">
+                    <label>Bio</label>
+                    <textarea id="editBio" placeholder="Ceritakan tentang dirimu..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Avatar URL</label>
+                    <input type="text" id="editAvatar" placeholder="https://...">
+                </div>
+                <button onclick="saveProfile()" id="saveBtn">Save Changes</button>
+                <button class="cancel-btn" onclick="hideEditForm()">Cancel</button>
+                <div id="editMessage"></div>
+            </div>
+            
+            <!-- Logout Button -->
             <button class="logout-btn" onclick="logout()">Logout</button>
             <div id="dashboardMessage"></div>
         </div>
@@ -186,6 +345,7 @@
     
     <script>
         let token = localStorage.getItem('token') || '';
+        let userData = null;
         
         // Check if already logged in
         if (token) {
@@ -197,6 +357,12 @@
             const password = document.getElementById('password').value;
             const messageDiv = document.getElementById('message');
             
+            if (!phone || !password) {
+                messageDiv.className = 'error';
+                messageDiv.textContent = 'Phone and password required';
+                return;
+            }
+            
             try {
                 const res = await fetch('/api/auth/login', {
                     method: 'POST',
@@ -207,8 +373,9 @@
                 const data = await res.json();
                 
                 if (data.success) {
-                    localStorage.setItem('token', data.token || '');
-                    token = data.token || '';
+                    localStorage.setItem('token', data.token);
+                    token = data.token;
+                    userData = data.user;
                     messageDiv.className = 'success';
                     messageDiv.textContent = 'Login berhasil!';
                     showDashboard(data.user);
@@ -231,10 +398,14 @@
                 const data = await res.json();
                 
                 if (data.success) {
+                    userData = data.user;
                     showDashboard(data.user);
+                } else {
+                    logout();
                 }
             } catch (error) {
                 console.error('Auth check failed:', error);
+                logout();
             }
         }
         
@@ -242,21 +413,105 @@
             document.getElementById('loginForm').style.display = 'none';
             document.getElementById('dashboard').style.display = 'block';
             
-            document.getElementById('userName').textContent = user.name || '-';
-            document.getElementById('userLevel').textContent = user.level || 0;
-            document.getElementById('userExp').textContent = `${user.exp || 0}/${user.nextLevelExp || 100}`;
-            document.getElementById('userMoney').textContent = (user.money || 0).toLocaleString();
-            document.getElementById('userBank').textContent = (user.bank || 0).toLocaleString();
-            document.getElementById('userCrystals').textContent = user.crystals || 0;
+            // Update display
+            document.getElementById('displayName').textContent = user.name || 'User';
+            document.getElementById('level').textContent = user.level || 0;
+            document.getElementById('exp').textContent = `${user.exp || 0}/${user.nextLevelExp || 100}`;
+            document.getElementById('money').textContent = 'Rp ' + (user.money || 0).toLocaleString();
+            document.getElementById('bank').textContent = 'Rp ' + (user.bank || 0).toLocaleString();
+            document.getElementById('crystals').textContent = user.crystals || 0;
+            document.getElementById('title').textContent = user.title || 'Member';
+            document.getElementById('bio').textContent = user.bio || 'No bio yet';
+            document.getElementById('nickname').textContent = user.nickname || '-';
+            document.getElementById('lastActive').textContent = user.lastActive ? new Date(user.lastActive).toLocaleString() : '-';
+            document.getElementById('registeredDate').textContent = user.registeredDate ? new Date(user.registeredDate).toLocaleDateString() : '-';
+            
+            // Set avatar
+            if (user.avatar) {
+                document.getElementById('avatar').innerHTML = `<img src="${user.avatar}" alt="avatar">`;
+            } else {
+                document.getElementById('avatar').textContent = user.name?.charAt(0).toUpperCase() || '👤';
+            }
+            
+            // Profile URL
+            const nickname = user.nickname || user.name || user.phone;
+            if (nickname) {
+                document.getElementById('profileUrl').innerHTML = `
+                    🔗 Profile: <a href="/u/${encodeURIComponent(nickname)}" target="_blank">asuma.my.id/u/${nickname}</a>
+                `;
+            }
+            
+            // Fill edit form
+            document.getElementById('editNickname').value = user.nickname || '';
+            document.getElementById('editBio').value = user.bio || '';
+            document.getElementById('editAvatar').value = user.avatar || '';
+        }
+        
+        function showEditForm() {
+            document.getElementById('editForm').style.display = 'block';
+        }
+        
+        function hideEditForm() {
+            document.getElementById('editForm').style.display = 'none';
+            document.getElementById('editMessage').textContent = '';
+        }
+        
+        async function saveProfile() {
+            const nickname = document.getElementById('editNickname').value;
+            const bio = document.getElementById('editBio').value;
+            const avatar = document.getElementById('editAvatar').value;
+            const saveBtn = document.getElementById('saveBtn');
+            const messageDiv = document.getElementById('editMessage');
+            
+            saveBtn.disabled = true;
+            messageDiv.textContent = 'Saving...';
+            
+            try {
+                const res = await fetch('/api/profile/update', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ nickname, bio, avatar })
+                });
+                
+                const data = await res.json();
+                
+                if (data.success) {
+                    messageDiv.className = 'success';
+                    messageDiv.textContent = 'Profile updated!';
+                    
+                    // Update user data
+                    if (userData) {
+                        userData.nickname = nickname;
+                        userData.bio = bio;
+                        userData.avatar = avatar;
+                        showDashboard(userData);
+                    }
+                    
+                    setTimeout(hideEditForm, 1500);
+                } else {
+                    messageDiv.className = 'error';
+                    messageDiv.textContent = data.message;
+                }
+            } catch (error) {
+                messageDiv.className = 'error';
+                messageDiv.textContent = 'Error: ' + error.message;
+            } finally {
+                saveBtn.disabled = false;
+            }
         }
         
         function logout() {
             localStorage.removeItem('token');
             token = '';
+            userData = null;
             document.getElementById('loginForm').style.display = 'block';
             document.getElementById('dashboard').style.display = 'none';
             document.getElementById('phone').value = '';
             document.getElementById('password').value = '';
+            document.getElementById('message').textContent = '';
         }
     </script>
 </body>
