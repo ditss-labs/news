@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Asuma Bot</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui,sans-serif; }
+    body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+    .container { background:white; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.3); width:100%; max-width:400px; padding:40px; }
+    h1 { color:#333; text-align:center; margin-bottom:10px; font-size:28px; }
+    .subtitle { text-align:center; color:#666; margin-bottom:30px; font-size:14px; }
+    .form-group { margin-bottom:20px; }
+    label { display:block; margin-bottom:8px; color:#555; font-weight:500; font-size:14px; }
+    input { width:100%; padding:12px 15px; border:2px solid #e0e0e0; border-radius:10px; font-size:16px; transition:border 0.3s; }
+    input:focus { outline:none; border-color:#667eea; }
+    button { width:100%; padding:14px; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white; border:none; border-radius:10px; font-size:16px; font-weight:600; cursor:pointer; transition:transform 0.2s; }
+    button:hover { transform:translateY(-2px); }
+    button:disabled { opacity:0.5; cursor:not-allowed; }
+    .register-link { text-align:center; margin-top:20px; font-size:14px; }
+    .register-link a { color:#667eea; text-decoration:none; font-weight:600; }
+    .register-link a:hover { text-decoration:underline; }
+    .message { margin-top:15px; padding:10px; border-radius:5px; text-align:center; font-size:14px; }
+    .error { background:#fee; color:#e74c3c; }
+    .success { background:#e8f8f0; color:#27ae60; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔐 Login</h1>
+    <p class="subtitle">Masuk dengan nomor dan password</p>
+    <div class="form-group">
+      <label>Nomor WhatsApp</label>
+      <input type="text" id="phone" placeholder="6281234567890">
+    </div>
+    <div class="form-group">
+      <label>Password</label>
+      <input type="password" id="password" placeholder="********">
+    </div>
+    <button onclick="login()" id="loginBtn">Login</button>
+    <div class="register-link">
+      Belum punya akun? <a href="/register">Register</a>
+    </div>
+    <div id="message" class="message"></div>
+  </div>
+  <script>
+    async function login() {
+      const phone = document.getElementById('phone').value;
+      const password = document.getElementById('password').value;
+      const btn = document.getElementById('loginBtn');
+      const msg = document.getElementById('message');
+      if (!phone || !password) {
+        msg.className = 'message error';
+        msg.textContent = 'Nomor dan password harus diisi';
+        return;
+      }
+      btn.disabled = true;
+      msg.className = 'message';
+      msg.textContent = 'Memproses...';
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+          localStorage.setItem('token', data.token);
+          localStorage.setItem('user', JSON.stringify(data.user));
+          window.location.href = '/dashboard';
+        } else {
+          msg.className = 'message error';
+          msg.textContent = data.message;
+          btn.disabled = false;
+        }
+      } catch (error) {
+        msg.className = 'message error';
+        msg.textContent = 'Terjadi kesalahan: ' + error.message;
+        btn.disabled = false;
+      }
+    }
+  </script>
+</body>
+</html>
