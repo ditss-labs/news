@@ -41,6 +41,42 @@ export const login = async (req, res) => {
       });
     }
     
+    // ===== UPDATE WEBSITE DATA =====
+    const now = new Date();
+    const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+    const userAgent = req.headers['user-agent'];
+    
+    // Update lastLogin
+    user.logs.lastLogin = now;
+    user.website.lastVisit = now;
+    user.website.pageViews = (user.website.pageViews || 0) + 1;
+    
+    // Add to login history
+    if (!user.logs.loginHistory) user.logs.loginHistory = [];
+    user.logs.loginHistory.push({
+      ip: ip || 'unknown',
+      device: userAgent || 'unknown',
+      timestamp: now
+    });
+    
+    // Add to sessions
+    if (!user.website.sessions) user.website.sessions = [];
+    const sessionId = Math.random().toString(36).substring(2, 15);
+    user.website.sessions.push(sessionId);
+    
+    // Add to dailyVisits
+    if (!user.website.dailyVisits) user.website.dailyVisits = [];
+    const today = new Date().toDateString();
+    const alreadyVisitedToday = user.website.dailyVisits.some(
+      date => new Date(date).toDateString() === today
+    );
+    if (!alreadyVisitedToday) {
+      user.website.dailyVisits.push(now);
+    }
+    
+    // Save to database
+    await user.save();
+    
     // Check JWT_SECRET
     if (!process.env.JWT_SECRET) {
       console.error('JWT_SECRET is not defined in .env file');
@@ -64,7 +100,7 @@ export const login = async (req, res) => {
     // Set cookie
     res.cookie('token', token, {
       httpOnly: true,
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      maxAge: 7 * 24 * 60 * 60 * 1000,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'lax'
     });
@@ -72,19 +108,25 @@ export const login = async (req, res) => {
     res.json({
       success: true,
       message: 'Login successful',
-      token, // Send token for localStorage
+      token,
       user: {
         jid: user._id,
         phone: user._id.split('@')[0],
         name: user.profile.name || 'User',
+        nickname: user.profile.nickname || '',
+        bio: user.profile.bio || '',
+        avatar: user.profile.avatar || '',
         level: user.account.level || 1,
         exp: user.account.exp || 0,
         nextLevelExp: user.account.nextLevelExp || 100,
+        title: user.account.title || 'Member',
         money: user.economy?.currencies?.money || 0,
         bank: user.economy?.currencies?.bank || 0,
         crystals: user.economy?.currencies?.crystals || 0,
-        avatar: user.profile.avatar || '',
-        registered: user.account.registered || false
+        registered: user.account.registered || false,
+        registeredDate: user.account.registrationDate,
+        lastActive: user.stats.lastActive,
+        lastLogin: now
       }
     });
     
@@ -97,7 +139,19 @@ export const login = async (req, res) => {
   }
 };
 
-export const logout = (req, res) => {
+export const logout = async (req, res) => {
+  try {
+    if (req.user) {
+      const user = await User.findById(req.user.jid);
+      if (user) {
+        user.logs.lastLogout = new Date();
+        await user.save();
+      }
+    }
+  } catch (error) {
+    console.error('Logout update error:', error);
+  }
+  
   res.clearCookie('token');
   res.json({ success: true, message: 'Logout successful' });
 };
@@ -119,14 +173,20 @@ export const me = async (req, res) => {
         jid: user._id,
         phone: user._id.split('@')[0],
         name: user.profile.name || 'User',
+        nickname: user.profile.nickname || '',
+        bio: user.profile.bio || '',
+        avatar: user.profile.avatar || '',
         level: user.account.level || 1,
         exp: user.account.exp || 0,
         nextLevelExp: user.account.nextLevelExp || 100,
+        title: user.account.title || 'Member',
         money: user.economy?.currencies?.money || 0,
         bank: user.economy?.currencies?.bank || 0,
         crystals: user.economy?.currencies?.crystals || 0,
-        avatar: user.profile.avatar || '',
-        registered: user.account.registered || false
+        registered: user.account.registered || false,
+        registeredDate: user.account.registrationDate,
+        lastActive: user.stats.lastActive,
+        lastLogin: user.logs.lastLogin
       }
     });
     
