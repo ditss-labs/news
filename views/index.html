@@ -1,518 +1,60 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Asuma Bot - Website</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
-        }
-        
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-        
-        .container {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            width: 100%;
-            max-width: 500px;
-            padding: 40px;
-        }
-        
-        h1 {
-            color: #333;
-            text-align: center;
-            margin-bottom: 10px;
-            font-size: 28px;
-        }
-        
-        .subtitle {
-            text-align: center;
-            color: #666;
-            margin-bottom: 30px;
-            font-size: 14px;
-        }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #555;
-            font-weight: 500;
-            font-size: 14px;
-        }
-        
-        input, textarea {
-            width: 100%;
-            padding: 12px 15px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: border 0.3s;
-        }
-        
-        textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        
-        input:focus, textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        button {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        
-        button:hover {
-            transform: translateY(-2px);
-        }
-        
-        button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .register-link {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 14px;
-        }
-        
-        .register-link a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        
-        .register-link a:hover {
-            text-decoration: underline;
-        }
-        
-        .error {
-            color: #e74c3c;
-            font-size: 14px;
-            margin-top: 10px;
-            text-align: center;
-        }
-        
-        .success {
-            color: #27ae60;
-            font-size: 14px;
-            margin-top: 10px;
-            text-align: center;
-        }
-        
-        .dashboard {
-            display: none;
-        }
-        
-        .user-info {
-            background: #f7f7f7;
-            border-radius: 10px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-        
-        .user-info p {
-            margin: 10px 0;
-            color: #555;
-        }
-        
-        .user-info strong {
-            color: #333;
-        }
-        
-        .avatar-section {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        
-        .avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 40px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            border: 3px solid white;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        }
-        
-        .avatar img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            object-fit: cover;
-        }
-        
-        .edit-profile-btn {
-            background: #3498db;
-            margin-top: 20px;
-        }
-        
-        .edit-profile-form {
-            display: none;
-            margin-top: 20px;
-            padding: 20px;
-            background: #f0f0f0;
-            border-radius: 10px;
-        }
-        
-        .cancel-btn {
-            background: #95a5a6;
-            margin-top: 10px;
-        }
-        
-        .logout-btn {
-            background: #e74c3c;
-            margin-top: 20px;
-        }
-        
-        .logout-btn:hover {
-            background: #c0392b;
-        }
-        
-        .info-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin: 15px 0;
-        }
-        
-        .info-card {
-            background: white;
-            padding: 15px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-        }
-        
-        .info-label {
-            font-size: 12px;
-            color: #666;
-            margin-bottom: 5px;
-        }
-        
-        .info-value {
-            font-size: 20px;
-            font-weight: bold;
-            color: #667eea;
-        }
-        
-        .profile-url {
-            background: #e8f4fd;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 10px 0;
-            font-size: 14px;
-            text-align: center;
-        }
-        
-        .profile-url a {
-            color: #2980b9;
-            text-decoration: none;
-        }
-        
-        .profile-url a:hover {
-            text-decoration: underline;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Asuma Bot - Official Website</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui,sans-serif; }
+    body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); min-height:100vh; color:white; }
+    .navbar { background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); padding:1rem 2rem; position:fixed; width:100%; top:0; z-index:1000; }
+    .nav-container { max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; }
+    .logo { font-size:1.8rem; font-weight:bold; color:white; text-decoration:none; }
+    .nav-links a { color:white; text-decoration:none; margin-left:2rem; padding:0.5rem 1rem; border-radius:5px; transition:background 0.3s; }
+    .nav-links a:hover { background:rgba(255,255,255,0.2); }
+    .hero { min-height:100vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:2rem; }
+    .hero-content { max-width:800px; }
+    .hero h1 { font-size:3.5rem; margin-bottom:1rem; animation:fadeInUp 1s ease; }
+    .hero p { font-size:1.2rem; margin-bottom:2rem; opacity:0.9; animation:fadeInUp 1s ease 0.2s both; }
+    .cta-buttons { animation:fadeInUp 1s ease 0.4s both; }
+    .btn { display:inline-block; padding:1rem 2rem; margin:0 1rem; border-radius:50px; text-decoration:none; font-weight:600; transition:transform 0.3s; }
+    .btn-primary { background:white; color:#667eea; }
+    .btn-secondary { background:transparent; color:white; border:2px solid white; }
+    .btn:hover { transform:translateY(-3px); }
+    .features { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:2rem; padding:4rem 2rem; max-width:1200px; margin:0 auto; }
+    .feature-card { background:rgba(255,255,255,0.1); backdrop-filter:blur(10px); padding:2rem; border-radius:10px; text-align:center; }
+    .feature-icon { font-size:3rem; margin-bottom:1rem; }
+    .feature-card h3 { margin-bottom:1rem; }
+    @keyframes fadeInUp { from { opacity:0; transform:translateY(30px); } to { opacity:1; transform:translateY(0); } }
+    footer { text-align:center; padding:2rem; background:rgba(0,0,0,0.3); }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Asuma Bot</h1>
-        <p class="subtitle">Login dengan nomor WhatsApp</p>
-        
-        <!-- Login Form -->
-        <div id="loginForm">
-            <div class="form-group">
-                <label>Nomor WhatsApp</label>
-                <input type="text" id="phone" placeholder="6281234567890">
-            </div>
-            <div class="form-group">
-                <label>Password</label>
-                <input type="password" id="password" placeholder="********">
-            </div>
-            <button onclick="login()">Login</button>
-            <div class="register-link">
-                Belum punya akun? <a href="#" onclick="alert('Register via WhatsApp dengan command .register')">Register via WhatsApp</a>
-            </div>
-            <div id="message"></div>
-        </div>
-        
-        <!-- Dashboard -->
-        <div id="dashboard" class="dashboard">
-            <div class="avatar-section">
-                <div class="avatar" id="avatar">👤</div>
-                <h2 id="displayName">-</h2>
-                <div class="profile-url" id="profileUrl"></div>
-            </div>
-            
-            <div class="info-grid">
-                <div class="info-card">
-                    <div class="info-label">Level</div>
-                    <div class="info-value" id="level">0</div>
-                </div>
-                <div class="info-card">
-                    <div class="info-label">Exp</div>
-                    <div class="info-value" id="exp">0/100</div>
-                </div>
-                <div class="info-card">
-                    <div class="info-label">Money</div>
-                    <div class="info-value" id="money">Rp 0</div>
-                </div>
-                <div class="info-card">
-                    <div class="info-label">Bank</div>
-                    <div class="info-value" id="bank">Rp 0</div>
-                </div>
-                <div class="info-card">
-                    <div class="info-label">Crystals</div>
-                    <div class="info-value" id="crystals">0</div>
-                </div>
-                <div class="info-card">
-                    <div class="info-label">Title</div>
-                    <div class="info-value" id="title">-</div>
-                </div>
-            </div>
-            
-            <div class="user-info">
-                <p><strong>Bio:</strong> <span id="bio">-</span></p>
-                <p><strong>Nickname:</strong> <span id="nickname">-</span></p>
-                <p><strong>Last Active:</strong> <span id="lastActive">-</span></p>
-                <p><strong>Registered:</strong> <span id="registeredDate">-</span></p>
-            </div>
-            
-            <!-- Edit Profile Button -->
-            <button class="edit-profile-btn" onclick="showEditForm()">Edit Profile</button>
-            
-            <!-- Edit Profile Form -->
-            <div id="editForm" class="edit-profile-form">
-                <h3 style="margin-bottom: 15px;">Edit Profile</h3>
-                <div class="form-group">
-                    <label>Nickname</label>
-                    <input type="text" id="editNickname" placeholder="Nickname">
-                </div>
-                <div class="form-group">
-                    <label>Bio</label>
-                    <textarea id="editBio" placeholder="Ceritakan tentang dirimu..."></textarea>
-                </div>
-                <div class="form-group">
-                    <label>Avatar URL</label>
-                    <input type="text" id="editAvatar" placeholder="https://...">
-                </div>
-                <button onclick="saveProfile()" id="saveBtn">Save Changes</button>
-                <button class="cancel-btn" onclick="hideEditForm()">Cancel</button>
-                <div id="editMessage"></div>
-            </div>
-            
-            <!-- Logout Button -->
-            <button class="logout-btn" onclick="logout()">Logout</button>
-            <div id="dashboardMessage"></div>
-        </div>
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="logo">✨ Asuma Bot</a>
+      <div class="nav-links">
+        <a href="/login">Login</a>
+        <a href="/register">Register</a>
+      </div>
     </div>
-    
-    <script>
-        let token = localStorage.getItem('token') || '';
-        let userData = null;
-        
-        // Check if already logged in
-        if (token) {
-            checkAuth();
-        }
-        
-        async function login() {
-            const phone = document.getElementById('phone').value;
-            const password = document.getElementById('password').value;
-            const messageDiv = document.getElementById('message');
-            
-            if (!phone || !password) {
-                messageDiv.className = 'error';
-                messageDiv.textContent = 'Phone and password required';
-                return;
-            }
-            
-            try {
-                const res = await fetch('/api/auth/login', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ phone, password })
-                });
-                
-                const data = await res.json();
-                
-                if (data.success) {
-                    localStorage.setItem('token', data.token);
-                    token = data.token;
-                    userData = data.user;
-                    messageDiv.className = 'success';
-                    messageDiv.textContent = 'Login berhasil!';
-                    showDashboard(data.user);
-                } else {
-                    messageDiv.className = 'error';
-                    messageDiv.textContent = data.message;
-                }
-            } catch (error) {
-                messageDiv.className = 'error';
-                messageDiv.textContent = 'Error: ' + error.message;
-            }
-        }
-        
-        async function checkAuth() {
-            try {
-                const res = await fetch('/api/auth/me', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                
-                const data = await res.json();
-                
-                if (data.success) {
-                    userData = data.user;
-                    showDashboard(data.user);
-                } else {
-                    logout();
-                }
-            } catch (error) {
-                console.error('Auth check failed:', error);
-                logout();
-            }
-        }
-        
-        function showDashboard(user) {
-            document.getElementById('loginForm').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-            
-            // Update display
-            document.getElementById('displayName').textContent = user.name || 'User';
-            document.getElementById('level').textContent = user.level || 0;
-            document.getElementById('exp').textContent = `${user.exp || 0}/${user.nextLevelExp || 100}`;
-            document.getElementById('money').textContent = 'Rp ' + (user.money || 0).toLocaleString();
-            document.getElementById('bank').textContent = 'Rp ' + (user.bank || 0).toLocaleString();
-            document.getElementById('crystals').textContent = user.crystals || 0;
-            document.getElementById('title').textContent = user.title || 'Member';
-            document.getElementById('bio').textContent = user.bio || 'No bio yet';
-            document.getElementById('nickname').textContent = user.nickname || '-';
-            document.getElementById('lastActive').textContent = user.lastActive ? new Date(user.lastActive).toLocaleString() : '-';
-            document.getElementById('registeredDate').textContent = user.registeredDate ? new Date(user.registeredDate).toLocaleDateString() : '-';
-            
-            // Set avatar
-            if (user.avatar) {
-                document.getElementById('avatar').innerHTML = `<img src="${user.avatar}" alt="avatar">`;
-            } else {
-                document.getElementById('avatar').textContent = user.name?.charAt(0).toUpperCase() || '👤';
-            }
-            
-            // Profile URL
-            const nickname = user.nickname || user.name || user.phone;
-            if (nickname) {
-                document.getElementById('profileUrl').innerHTML = `
-                    🔗 Profile: <a href="/u/${encodeURIComponent(nickname)}" target="_blank">asuma.my.id/u/${nickname}</a>
-                `;
-            }
-            
-            // Fill edit form
-            document.getElementById('editNickname').value = user.nickname || '';
-            document.getElementById('editBio').value = user.bio || '';
-            document.getElementById('editAvatar').value = user.avatar || '';
-        }
-        
-        function showEditForm() {
-            document.getElementById('editForm').style.display = 'block';
-        }
-        
-        function hideEditForm() {
-            document.getElementById('editForm').style.display = 'none';
-            document.getElementById('editMessage').textContent = '';
-        }
-        
-        async function saveProfile() {
-            const nickname = document.getElementById('editNickname').value;
-            const bio = document.getElementById('editBio').value;
-            const avatar = document.getElementById('editAvatar').value;
-            const saveBtn = document.getElementById('saveBtn');
-            const messageDiv = document.getElementById('editMessage');
-            
-            saveBtn.disabled = true;
-            messageDiv.textContent = 'Saving...';
-            
-            try {
-                const res = await fetch('/api/profile/update', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    },
-                    body: JSON.stringify({ nickname, bio, avatar })
-                });
-                
-                const data = await res.json();
-                
-                if (data.success) {
-                    messageDiv.className = 'success';
-                    messageDiv.textContent = 'Profile updated!';
-                    
-                    // Update user data
-                    if (userData) {
-                        userData.nickname = nickname;
-                        userData.bio = bio;
-                        userData.avatar = avatar;
-                        showDashboard(userData);
-                    }
-                    
-                    setTimeout(hideEditForm, 1500);
-                } else {
-                    messageDiv.className = 'error';
-                    messageDiv.textContent = data.message;
-                }
-            } catch (error) {
-                messageDiv.className = 'error';
-                messageDiv.textContent = 'Error: ' + error.message;
-            } finally {
-                saveBtn.disabled = false;
-            }
-        }
-        
-        function logout() {
-            localStorage.removeItem('token');
-            token = '';
-            userData = null;
-            document.getElementById('loginForm').style.display = 'block';
-            document.getElementById('dashboard').style.display = 'none';
-            document.getElementById('phone').value = '';
-            document.getElementById('password').value = '';
-            document.getElementById('message').textContent = '';
-        }
-    </script>
+  </nav>
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Selamat Datang di Asuma Bot</h1>
+      <p>Bot WhatsApp multifungsi dengan berbagai fitur menarik! Leveling, Economy, Games, dan masih banyak lagi.</p>
+      <div class="cta-buttons">
+        <a href="/login" class="btn btn-primary">Login</a>
+        <a href="/register" class="btn btn-secondary">Register</a>
+      </div>
+    </div>
+  </section>
+  <section class="features">
+    <div class="feature-card"><div class="feature-icon">📊</div><h3>Leveling System</h3><p>Naikkan levelmu dengan aktif chatting</p></div>
+    <div class="feature-card"><div class="feature-icon">💰</div><h3>Economy</h3><p>Dapatkan uang, bank, dan crystal</p></div>
+    <div class="feature-card"><div class="feature-icon">🎮</div><h3>Games</h3><p>Mainkan berbagai game seru</p></div>
+    <div class="feature-card"><div class="feature-icon">🐾</div><h3>Pets</h3><p>Pelihara dan rawat hewan peliharaanmu</p></div>
+  </section>
+  <footer>© 2025 Asuma Bot. All rights reserved.</footer>
 </body>
 </html>
