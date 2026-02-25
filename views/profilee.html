@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - Asuma Bot</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui,sans-serif; }
+    body { background:#f5f5f5; }
+    .navbar { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); padding:1rem 2rem; color:white; }
+    .nav-container { max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; }
+    .logo { font-size:1.5rem; font-weight:bold; }
+    .nav-links a { color:white; text-decoration:none; margin-left:1.5rem; padding:0.5rem; }
+    .nav-links a:hover { background:rgba(255,255,255,0.2); border-radius:5px; }
+    .container { max-width:1000px; margin:2rem auto; padding:0 2rem; }
+    .profile-header { background:white; border-radius:15px; padding:2rem; box-shadow:0 2px 10px rgba(0,0,0,0.1); margin-bottom:2rem; display:flex; gap:2rem; align-items:center; flex-wrap:wrap; }
+    .avatar { width:120px; height:120px; border-radius:50%; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); display:flex; align-items:center; justify-content:center; color:white; font-size:48px; font-weight:bold; border:4px solid white; box-shadow:0 5px 15px rgba(0,0,0,0.2); overflow:hidden; }
+    .avatar img { width:100%; height:100%; object-fit:cover; }
+    .profile-info { flex:1; }
+    .profile-info h1 { font-size:2rem; color:#333; margin-bottom:0.5rem; }
+    .profile-info .nickname { font-size:1.2rem; color:#666; margin-bottom:0.5rem; }
+    .profile-info .bio { color:#777; line-height:1.6; }
+    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1.5rem; margin-bottom:2rem; }
+    .stat-card { background:white; border-radius:10px; padding:1.5rem; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
+    .stat-title { font-size:0.9rem; color:#666; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem; }
+    .stat-value { font-size:2rem; font-weight:bold; color:#667eea; margin-bottom:0.5rem; }
+    .stat-desc { color:#999; font-size:0.9rem; }
+    .detail-card { background:white; border-radius:10px; padding:2rem; box-shadow:0 2px 10px rgba(0,0,0,0.1); margin-bottom:2rem; }
+    .detail-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-top:1rem; }
+    .detail-item { padding:1rem; background:#f8f9fa; border-radius:8px; }
+    .detail-label { font-size:0.8rem; color:#666; margin-bottom:0.3rem; }
+    .detail-value { font-size:1.1rem; font-weight:500; color:#333; }
+    .edit-btn { background:#667eea; color:white; border:none; padding:0.8rem 2rem; border-radius:5px; font-size:1rem; cursor:pointer; margin-top:1rem; }
+    .edit-btn:hover { background:#5a67d8; }
+    .edit-form { display:none; background:white; border-radius:10px; padding:2rem; box-shadow:0 2px 10px rgba(0,0,0,0.1); margin-top:2rem; }
+    .edit-form.active { display:block; }
+    .form-group { margin-bottom:1rem; }
+    .form-group label { display:block; margin-bottom:0.5rem; color:#555; font-weight:500; }
+    .form-group input, .form-group textarea, .form-group select { width:100%; padding:0.8rem; border:2px solid #e0e0e0; border-radius:5px; font-size:1rem; }
+    .form-group input:focus, .form-group textarea:focus { outline:none; border-color:#667eea; }
+    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .save-btn { background:#27ae60; color:white; border:none; padding:0.8rem 2rem; border-radius:5px; font-size:1rem; cursor:pointer; margin-right:1rem; }
+    .cancel-btn { background:#95a5a6; color:white; border:none; padding:0.8rem 2rem; border-radius:5px; font-size:1rem; cursor:pointer; }
+    .message { margin-top:1rem; padding:1rem; border-radius:5px; text-align:center; }
+    .success { background:#d4edda; color:#155724; }
+    .error { background:#f8d7da; color:#721c24; }
+    footer { text-align:center; padding:2rem; color:#666; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">✨ Asuma Bot</div>
+      <div class="nav-links">
+        <a href="/dashboard">Dashboard</a>
+        <a href="/profile">Profile</a>
+        <a href="#" onclick="logout()">Logout</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div id="profileView">
+      <div class="profile-header">
+        <div class="avatar" id="avatar">👤</div>
+        <div class="profile-info">
+          <h1 id="displayName">Loading...</h1>
+          <div class="nickname" id="displayNickname">@...</div>
+          <div class="bio" id="displayBio"></div>
+        </div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-title">Level</div>
+          <div class="stat-value" id="level">0</div>
+          <div class="stat-desc" id="exp">0/100 EXP</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">Economy</div>
+          <div class="stat-value" id="money">Rp 0</div>
+          <div class="stat-desc" id="bank">Bank: Rp 0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">Crystals</div>
+          <div class="stat-value" id="crystals">0</div>
+          <div class="stat-desc" id="gems">Gems: 0</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-title">Title</div>
+          <div class="stat-value" id="title">-</div>
+          <div class="stat-desc" id="rank">Rank #1</div>
+        </div>
+      </div>
+
+      <div class="detail-card">
+        <h2 style="margin-bottom:1rem;">Detail Profile</h2>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-label">Nomor WhatsApp</div>
+            <div class="detail-value" id="phone">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">JID</div>
+            <div class="detail-value" id="jid">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Gender</div>
+            <div class="detail-value" id="gender">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Age</div>
+            <div class="detail-value" id="age">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Location</div>
+            <div class="detail-value" id="location">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Timezone</div>
+            <div class="detail-value" id="timezone">Asia/Jakarta</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Email</div>
+            <div class="detail-value" id="email">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Verified</div>
+            <div class="detail-value" id="verified">Phone ✓, Email ✗</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Registered</div>
+            <div class="detail-value" id="registeredDate">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Last Active</div>
+            <div class="detail-value" id="lastActive">-</div>
+          </div>
+        </div>
+        <button class="edit-btn" onclick="showEditForm()">Edit Profile</button>
+      </div>
+
+      <div class="detail-card">
+        <h2 style="margin-bottom:1rem;">Social & Stats</h2>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-label">Guild</div>
+            <div class="detail-value" id="guild">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Reputation</div>
+            <div class="detail-value" id="reputation">0</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Karma</div>
+            <div class="detail-value" id="karma">0</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Friends</div>
+            <div class="detail-value" id="friends">0</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Messages</div>
+            <div class="detail-value" id="messages">0</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Commands</div>
+            <div class="detail-value" id="commands">0</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Games Played</div>
+            <div class="detail-value" id="games">0</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Wins</div>
+            <div class="detail-value" id="wins">0</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Referral Code</div>
+            <div class="detail-value" id="referral">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Profile Views</div>
+            <div class="detail-value" id="profileViews">0</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="detail-card">
+        <h2 style="margin-bottom:1rem;">Website Activity</h2>
+        <div class="detail-grid">
+          <div class="detail-item">
+            <div class="detail-label">Last Visit</div>
+            <div class="detail-value" id="lastVisit">-</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Page Views</div>
+            <div class="detail-value" id="pageViews">0</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Daily Visits</div>
+            <div class="detail-value" id="dailyVisits">0</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Sessions</div>
+            <div class="detail-value" id="sessions">0</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Dark Mode</div>
+            <div class="detail-value" id="darkMode">Yes</div>
+          </div>
+          <div class="detail-item">
+            <div class="detail-label">Notif Email</div>
+            <div class="detail-value" id="emailNotif">Yes</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="editForm" class="edit-form">
+      <h2 style="margin-bottom:1.5rem;">Edit Profile</h2>
+      <div class="form-group">
+        <label>Name</label>
+        <input type="text" id="editName" placeholder="Nama">
+      </div>
+      <div class="form-group">
+        <label>Nickname</label>
+        <input type="text" id="editNickname" placeholder="Nickname">
+      </div>
+      <div class="form-group">
+        <label>Bio</label>
+        <textarea id="editBio" placeholder="Ceritakan tentang dirimu..." rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Avatar URL</label>
+        <input type="url" id="editAvatar" placeholder="https://...">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Gender</label>
+          <select id="editGender">
+            <option value="">Pilih gender</option>
+            <option value="male">Laki-laki</option>
+            <option value="female">Perempuan</option>
+            <option value="other">Lainnya</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Age</label>
+          <input type="number" id="editAge" placeholder="Usia" min="1" max="150">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Country</label>
+          <input type="text" id="editCountry" placeholder="Negara">
+        </div>
+        <div class="form-group">
+          <label>City</label>
+          <input type="text" id="editCity" placeholder="Kota">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="editEmail" placeholder="email@example.com">
+      </div>
+      <div class="form-group">
+        <label>Theme</label>
+        <select id="editTheme">
+          <option value="dark">Dark</option>
+          <option value="light">Light</option>
+        </select>
+      </div>
+      <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+        <button class="save-btn" onclick="saveProfile()">Save Changes</button>
+        <button class="cancel-btn" onclick="hideEditForm()">Cancel</button>
+      </div>
+      <div id="editMessage" class="message"></div>
+    </div>
+  </div>
+
+  <footer>© 2025 Asuma Bot</footer>
+
+  <script>
+    const token = localStorage.getItem('token');
+    if (!token) window.location.href = '/login';
+
+    let userData = null;
+
+    async function fetchProfile() {
+      try {
+        const res = await fetch('/api/auth/me', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          userData = data.user;
+          renderProfile(userData);
+        } else {
+          logout();
+        }
+      } catch (error) {
+        console.error(error);
+        document.getElementById('displayName').textContent = 'Error loading profile';
+      }
+    }
+
+    function renderProfile(user) {
+      document.getElementById('displayName').textContent = user.name || 'User';
+      document.getElementById('displayNickname').textContent = user.nickname ? '@' + user.nickname : '@' + (user.name || 'user');
+      document.getElementById('displayBio').textContent = user.bio || 'Belum ada bio';
+      
+      const avatar = document.getElementById('avatar');
+      if (user.avatar) {
+        avatar.innerHTML = `<img src="${user.avatar}" alt="avatar" onerror="this.onerror=null; this.parentElement.innerHTML='👤';">`;
+      } else {
+        avatar.textContent = user.name?.charAt(0).toUpperCase() || '👤';
+      }
+
+      document.getElementById('level').textContent = user.level || 0;
+      document.getElementById('exp').textContent = `${user.exp || 0}/${user.nextLevelExp || 100} EXP`;
+      document.getElementById('money').textContent = 'Rp ' + (user.money || 0).toLocaleString();
+      document.getElementById('bank').textContent = 'Bank: Rp ' + (user.bank || 0).toLocaleString();
+      document.getElementById('crystals').textContent = user.crystals || 0;
+      document.getElementById('gems').textContent = 'Gems: ' + (user.gems || 0);
+      document.getElementById('title').textContent = user.title || '-';
+      document.getElementById('rank').textContent = 'Rank #' + (user.rank || 1);
+      
+      document.getElementById('phone').textContent = user.phone || '-';
+      document.getElementById('jid').textContent = user.jid || '-';
+      document.getElementById('gender').textContent = user.gender || '-';
+      document.getElementById('age').textContent = user.age || '-';
+      document.getElementById('location').textContent = user.city && user.country ? `${user.city}, ${user.country}` : '-';
+      document.getElementById('timezone').textContent = user.timezone || 'Asia/Jakarta';
+      document.getElementById('email').textContent = user.email || '-';
+      document.getElementById('verified').textContent = `Phone ${user.isPhoneVerified ? '✓' : '✗'}, Email ${user.isEmailVerified ? '✓' : '✗'}`;
+      document.getElementById('registeredDate').textContent = user.registeredDate ? new Date(user.registeredDate).toLocaleDateString() : '-';
+      document.getElementById('lastActive').textContent = user.lastActive ? new Date(user.lastActive).toLocaleString() : '-';
+
+      document.getElementById('guild').textContent = user.guild || '-';
+      document.getElementById('reputation').textContent = user.reputation || 0;
+      document.getElementById('karma').textContent = user.karma || 0;
+      document.getElementById('friends').textContent = user.friends || 0;
+      document.getElementById('messages').textContent = user.messagesSent || 0;
+      document.getElementById('commands').textContent = user.commandsUsed || 0;
+      document.getElementById('games').textContent = user.gamesPlayed || 0;
+      document.getElementById('wins').textContent = user.wins || 0;
+      document.getElementById('referral').textContent = user.referralCode || '-';
+      document.getElementById('profileViews').textContent = user.profileViews || 0;
+
+      document.getElementById('lastVisit').textContent = user.lastVisit ? new Date(user.lastVisit).toLocaleString() : '-';
+      document.getElementById('pageViews').textContent = user.pageViews || 0;
+      document.getElementById('dailyVisits').textContent = user.dailyVisits || 0;
+      document.getElementById('sessions').textContent = user.sessions || 0;
+      document.getElementById('darkMode').textContent = user.darkMode ? 'Yes' : 'No';
+      document.getElementById('emailNotif').textContent = user.emailNotifications ? 'Yes' : 'No';
+
+      document.getElementById('editName').value = user.name || '';
+      document.getElementById('editNickname').value = user.nickname || '';
+      document.getElementById('editBio').value = user.bio || '';
+      document.getElementById('editAvatar').value = user.avatar || '';
+      document.getElementById('editGender').value = user.gender || '';
+      document.getElementById('editAge').value = user.age || '';
+      document.getElementById('editCountry').value = user.country || '';
+      document.getElementById('editCity').value = user.city || '';
+      document.getElementById('editEmail').value = user.email || '';
+      document.getElementById('editTheme').value = user.darkMode ? 'dark' : 'light';
+    }
+
+    function showEditForm() {
+      document.getElementById('editForm').classList.add('active');
+      window.scrollTo({ top: document.getElementById('editForm').offsetTop, behavior: 'smooth' });
+    }
+
+    function hideEditForm() {
+      document.getElementById('editForm').classList.remove('active');
+      document.getElementById('editMessage').textContent = '';
+    }
+
+    async function saveProfile() {
+      const data = {
+        name: document.getElementById('editName').value,
+        nickname: document.getElementById('editNickname').value,
+        bio: document.getElementById('editBio').value,
+        avatar: document.getElementById('editAvatar').value,
+        gender: document.getElementById('editGender').value,
+        age: document.getElementById('editAge').value ? parseInt(document.getElementById('editAge').value) : null,
+        country: document.getElementById('editCountry').value,
+        city: document.getElementById('editCity').value,
+        email: document.getElementById('editEmail').value,
+        darkMode: document.getElementById('editTheme').value === 'dark'
+      };
+
+      const btn = document.querySelector('.save-btn');
+      const msg = document.getElementById('editMessage');
+      
+      btn.disabled = true;
+      msg.className = 'message';
+      msg.textContent = 'Menyimpan...';
+
+      try {
+        const res = await fetch('/api/profile/update', {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(data)
+        });
+        const result = await res.json();
+        if (result.success) {
+          msg.className = 'message success';
+          msg.textContent = 'Profile berhasil diupdate!';
+          await fetchProfile();
+          setTimeout(() => {
+            hideEditForm();
+            msg.textContent = '';
+          }, 1500);
+        } else {
+          msg.className = 'message error';
+          msg.textContent = result.message;
+        }
+      } catch (error) {
+        msg.className = 'message error';
+        msg.textContent = 'Error: ' + error.message;
+      } finally {
+        btn.disabled = false;
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/';
+    }
+
+    fetchProfile();
+  </script>
+</body>
+</html>
