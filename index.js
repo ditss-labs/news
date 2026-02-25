@@ -130,7 +130,7 @@ app.use('/api/economy', economyRoutes);
 // SERVE HTML PAGES 
 // ============================================
 app.get('/profile', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'profile.html'));
+  res.sendFile(path.join(__dirname, 'views', 'profilee.html'));
 });
 app.get('/login', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'login.html'));
