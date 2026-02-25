@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Asuma Bot</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui,sans-serif; }
+    body { background:#f5f5f5; }
+    .navbar { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); padding:1rem 2rem; color:white; }
+    .nav-container { max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; }
+    .logo { font-size:1.5rem; font-weight:bold; }
+    .user-info { display:flex; align-items:center; gap:1rem; }
+    .logout-btn { background:rgba(255,255,255,0.2); border:none; color:white; padding:0.5rem 1rem; border-radius:5px; cursor:pointer; }
+    .logout-btn:hover { background:rgba(255,255,255,0.3); }
+    .container { max-width:1200px; margin:2rem auto; padding:0 2rem; }
+    .welcome-card { background:white; border-radius:10px; padding:2rem; margin-bottom:2rem; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
+    .welcome-card h1 { color:#333; margin-bottom:0.5rem; }
+    .welcome-card p { color:#666; }
+    .content-placeholder { background:white; border-radius:10px; padding:3rem; text-align:center; color:#999; border:2px dashed #ddd; }
+    footer { text-align:center; padding:2rem; color:#666; margin-top:2rem; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-container">
+      <div class="logo">✨ Asuma Bot</div>
+      <div class="user-info">
+        <span id="userDisplay">Loading...</span>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+    </div>
+  </nav>
+  <div class="container">
+    <div class="welcome-card">
+      <h1 id="welcomeMessage">Selamat datang!</h1>
+      <p id="userDetail">...</p>
+    </div>
+    <div class="content-placeholder">
+      <h2>✨ Halaman Dashboard ✨</h2>
+      <p style="margin-top:1rem;">Kamu bisa edit halaman ini sesuai kebutuhanmu.</p>
+    </div>
+  </div>
+  <footer>© 2025 Asuma Bot</footer>
+  <script>
+    const token = localStorage.getItem('token');
+    if (!token) window.location.href = '/login';
+    async function fetchUser() {
+      try {
+        const res = await fetch('/api/auth/me', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('userDisplay').textContent = data.user.name || data.user.phone;
+          document.getElementById('welcomeMessage').textContent = `Selamat datang, ${data.user.name || 'User'}!`;
+          document.getElementById('userDetail').textContent = `Nomor: ${data.user.phone}`;
+        } else {
+          logout();
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchUser();
+    function logout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      window.location.href = '/';
+    }
+  </script>
+</body>
+</html>
