@@ -6,29 +6,20 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 export default (app) => {
-    
-    // Halaman profile publik
-    app.get('/u/:nickname', (req, res) => {
-        res.sendFile(path.join(__dirname, '../../views', 'profile.html'));
-    });
-    
-    // API profile publik
-    app.get('/u/api/:nickname', async (req, res) => {
+    app.get('/u/:nickname', async (req, res) => {
         try {
             const { nickname } = req.params;
+          //  const User = (await import('../../models/User.js')).default;
             
-            const user = await User.findOne({ 
+            const user = await User.findOne({
                 $or: [
                     { 'profile.nickname': { $regex: new RegExp(`^${nickname}$`, 'i') } },
                     { 'profile.name': { $regex: new RegExp(`^${nickname}$`, 'i') } }
                 ]
-            }).select('-profile.password -logs -__v');
+            }).select('profile.name profile.nickname profile.bio profile.avatar account.level account.title');
             
             if (!user) {
-                return res.status(404).json({
-                    success: false,
-                    message: 'User not found'
-                });
+                return res.status(404).json({ success: false, message: 'User not found' });
             }
             
             res.json({
@@ -42,13 +33,8 @@ export default (app) => {
                     title: user.account.title
                 }
             });
-            
         } catch (error) {
-            res.status(500).json({
-                success: false,
-                message: error.message
-            });
+            res.status(500).json({ success: false, message: error.message });
         }
     });
-    
 };
