@@ -13,8 +13,7 @@ import authRoutes from './routes/auth.js';
 import profileRoutes from './routes/profile.js';
 import leaderboardRoutes from './routes/leaderboard.js';
 import economyRoutes from './routes/economy.js';
-
-// Models
+import otpRoutes from './routes/otp.js';
 import User from './models/User.js';
 
 dotenv.config();
@@ -25,7 +24,6 @@ const __dirname = path.dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
@@ -46,7 +44,7 @@ async function connectDB() {
     return false;
   }
 }
-// Settings
+app.use('/api/otp', otpRoutes);
 app.get('/api/settings', (req, res) => {
   res.json({
     status: 'success',
@@ -57,8 +55,6 @@ app.get('/api/settings', (req, res) => {
     }
   });
 });
-
-// Stats
 app.get('/api/stats', async (req, res) => {
   try {
     const userCount = await User.countDocuments();
