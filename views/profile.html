@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Asuma Bot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .profile-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+        }
+        
+        .profile-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            font-weight: bold;
+            border: 4px solid white;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .name {
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .nickname {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+        
+        .title {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 30px 0;
+        }
+        
+        .info-item {
+            background: #f7f7f7;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        .bio {
+            background: #f7f7f7;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            line-height: 1.6;
+            color: #555;
+        }
+        
+        .social {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .social-item {
+            text-align: center;
+        }
+        
+        .social-label {
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .social-value {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .back-btn:hover {
+            text-decoration: underline;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+        
+        .error {
+            text-align: center;
+            padding: 40px;
+            color: #e74c3c;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-card" id="profileCard">
+        <div class="loading" id="loading">Loading profile...</div>
+        <div class="error" id="error" style="display: none;">User not found</div>
+        
+        <div id="profileContent" style="display: none;">
+            <div class="profile-header">
+                <div class="avatar" id="avatar">👤</div>
+                <div class="name" id="name">-</div>
+                <div class="nickname" id="nickname">@-</div>
+                <div class="title" id="title">-</div>
+            </div>
+            
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="info-label">Level</div>
+                    <div class="info-value" id="level">0</div>
+                </div>
+                <div class="info-item">
+                    <div class="info-label">Reputasi</div>
+                    <div class="info-value" id="reputation">0</div>
+                </div>
+            </div>
+            
+            <div class="bio" id="bio">-</div>
+            
+            <div class="social">
+                <div class="social-item">
+                    <div class="social-label">Guild</div>
+                    <div class="social-value" id="guild">-</div>
+                </div>
+                <div class="social-item">
+                    <div class="social-label">Registered</div>
+                    <div class="social-value" id="registered">No</div>
+                </div>
+            </div>
+            
+            <a href="/" class="back-btn">← Back to Home</a>
+        </div>
+    </div>
+    
+    <script>
+        // Ambil nickname dari URL
+        const nickname = window.location.pathname.split('/').pop();
+        
+        // Fetch profile data
+        async function loadProfile() {
+            try {
+                const response = await fetch(`/u/${nickname}`);
+                const data = await response.json();
+                
+                document.getElementById('loading').style.display = 'none';
+                
+                if (data.success) {
+                    document.getElementById('profileContent').style.display = 'block';
+                    
+                    const profile = data.profile;
+                    
+                    // Set data
+                    document.getElementById('name').textContent = profile.name || 'Anonymous';
+                    document.getElementById('nickname').textContent = '@' + (profile.nickname || profile.name || 'unknown');
+                    document.getElementById('title').textContent = profile.title || 'Member';
+                    document.getElementById('level').textContent = profile.level || 0;
+                    document.getElementById('reputation').textContent = profile.social?.reputation || 0;
+                    document.getElementById('bio').textContent = profile.bio || 'No bio yet';
+                    document.getElementById('guild').textContent = profile.social?.guild || '-';
+                    document.getElementById('registered').textContent = profile.registered ? 'Yes' : 'No';
+                    
+                    // Set avatar
+                    if (profile.avatar) {
+                        document.getElementById('avatar').innerHTML = `<img src="${profile.avatar}" alt="avatar">`;
+                    } else {
+                        document.getElementById('avatar').textContent = profile.name?.charAt(0).toUpperCase() || '👤';
+                    }
+                    
+                } else {
+                    document.getElementById('error').style.display = 'block';
+                    document.getElementById('error').textContent = 'User not found';
+                }
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = 'Error loading profile';
+            }
+        }
+        
+        loadProfile();
+    </script>
+</body>
+</html>
