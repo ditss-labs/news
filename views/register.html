@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Register - Asuma Bot</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui,sans-serif; }
+    body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
+    .container { background:white; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.3); width:100%; max-width:400px; padding:40px; }
+    h1 { color:#333; text-align:center; margin-bottom:10px; font-size:28px; }
+    .subtitle { text-align:center; color:#666; margin-bottom:30px; font-size:14px; }
+    .form-group { margin-bottom:20px; }
+    label { display:block; margin-bottom:8px; color:#555; font-weight:500; font-size:14px; }
+    input { width:100%; padding:12px 15px; border:2px solid #e0e0e0; border-radius:10px; font-size:16px; transition:border 0.3s; }
+    input:focus { outline:none; border-color:#667eea; }
+    button { width:100%; padding:14px; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white; border:none; border-radius:10px; font-size:16px; font-weight:600; cursor:pointer; transition:transform 0.2s; margin-top:10px; }
+    button:hover { transform:translateY(-2px); }
+    button:disabled { opacity:0.5; cursor:not-allowed; }
+    .login-link { text-align:center; margin-top:20px; font-size:14px; }
+    .login-link a { color:#667eea; text-decoration:none; font-weight:600; }
+    .login-link a:hover { text-decoration:underline; }
+    .message { margin-top:15px; padding:10px; border-radius:5px; text-align:center; font-size:14px; }
+    .error { background:#fee; color:#e74c3c; }
+    .success { background:#e8f8f0; color:#27ae60; }
+    .step { display:none; }
+    .step.active { display:block; }
+    .timer { text-align:center; font-size:14px; color:#666; margin-top:10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📝 Register</h1>
+    <p class="subtitle">Daftar akun baru</p>
+
+    <div id="step1" class="step active">
+      <div class="form-group">
+        <label>Nomor WhatsApp</label>
+        <input type="text" id="phone" placeholder="6281234567890">
+      </div>
+      <button onclick="sendOTP()" id="sendBtn">Kirim OTP</button>
+      <div class="login-link">
+        Sudah punya akun? <a href="/login">Login</a>
+      </div>
+      <div id="message1" class="message"></div>
+    </div>
+
+    <div id="step2" class="step">
+      <div class="form-group">
+        <label>Kode OTP</label>
+        <input type="text" id="otp" placeholder="123456" maxlength="6">
+      </div>
+      <button onclick="verifyOTP()" id="verifyBtn">Verifikasi</button>
+      <div class="timer" id="timer"></div>
+      <div id="message2" class="message"></div>
+      <a href="#" onclick="resetToStep1()" style="display:block; text-align:center; margin-top:15px; color:#666; text-decoration:none;">← Ganti nomor</a>
+    </div>
+
+    <div id="step3" class="step">
+      <div class="form-group">
+        <label>Buat Password</label>
+        <input type="password" id="newPassword" placeholder="Minimal 6 karakter">
+      </div>
+      <button onclick="setPassword()" id="setPassBtn">Daftar</button>
+      <div id="message3" class="message"></div>
+    </div>
+  </div>
+
+  <script>
+    let phoneNumber = '';
+    let timerInterval;
+    let timeLeft = 300;
+
+    async function sendOTP() {
+      const phone = document.getElementById('phone').value;
+      const btn = document.getElementById('sendBtn');
+      const msg = document.getElementById('message1');
+      if (!phone) {
+        msg.className = 'message error';
+        msg.textContent = 'Masukkan nomor telepon';
+        return;
+      }
+      btn.disabled = true;
+      msg.className = 'message';
+      msg.textContent = 'Mengirim OTP...';
+      try {
+        const res = await fetch('/api/otp/send', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone })
+        });
+        const data = await res.json();
+        if (data.success) {
+          phoneNumber = phone;
+          document.getElementById('step1').classList.remove('active');
+          document.getElementById('step2').classList.add('active');
+          startTimer(300);
+          msg.className = 'message success';
+          msg.textContent = 'OTP sedang dikirim. Cek WhatsApp Anda.';
+        } else {
+          msg.className = 'message error';
+          msg.textContent = data.message;
+          btn.disabled = false;
+        }
+      } catch (error) {
+        msg.className = 'message error';
+        msg.textContent = 'Error: ' + error.message;
+        btn.disabled = false;
+      }
+    }
+
+    async function verifyOTP() {
+      const otp = document.getElementById('otp').value;
+      const btn = document.getElementById('verifyBtn');
+      const msg = document.getElementById('message2');
+      if (!otp || otp.length !== 6) {
+        msg.className = 'message error';
+        msg.textContent = 'Masukkan 6 digit OTP';
+        return;
+      }
+      btn.disabled = true;
+      msg.className = 'message';
+      msg.textContent = 'Memverifikasi...';
+      try {
+        const res = await fetch('/api/otp/verify', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: phoneNumber, otp })
+        });
+        const data = await res.json();
+        if (data.success) {
+          clearInterval(timerInterval);
+          document.getElementById('step2').classList.remove('active');
+          document.getElementById('step3').classList.add('active');
+          msg.className = 'message success';
+          msg.textContent = 'OTP benar. Silakan buat password.';
+        } else {
+          msg.className = 'message error';
+          msg.textContent = data.message;
+          btn.disabled = false;
+        }
+      } catch (error) {
+        msg.className = 'message error';
+        msg.textContent = 'Error: ' + error.message;
+        btn.disabled = false;
+      }
+    }
+
+    async function setPassword() {
+      const password = document.getElementById('newPassword').value;
+      const btn = document.getElementById('setPassBtn');
+      const msg = document.getElementById('message3');
+      if (!password || password.length < 6) {
+        msg.className = 'message error';
+        msg.textContent = 'Password minimal 6 karakter';
+        return;
+      }
+      btn.disabled = true;
+      msg.className = 'message';
+      msg.textContent = 'Menyimpan...';
+      try {
+        const res = await fetch('/api/auth/set-password', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ phone: phoneNumber, password })
+        });
+        const data = await res.json();
+        if (data.success) {
+          msg.className = 'message success';
+          msg.textContent = 'Registrasi berhasil! Mengalihkan...';
+          setTimeout(() => {
+            window.location.href = '/login';
+          }, 1500);
+        } else {
+          msg.className = 'message error';
+          msg.textContent = data.message;
+          btn.disabled = false;
+        }
+      } catch (error) {
+        msg.className = 'message error';
+        msg.textContent = 'Error: ' + error.message;
+        btn.disabled = false;
+      }
+    }
+
+    function startTimer(seconds) {
+      timeLeft = seconds;
+      updateTimer();
+      timerInterval = setInterval(() => {
+        timeLeft--;
+        updateTimer();
+        if (timeLeft <= 0) {
+          clearInterval(timerInterval);
+          document.getElementById('timer').innerHTML = '⏰ OTP expired. <a href="#" onclick="resendOTP()">Kirim ulang</a>';
+        }
+      }, 1000);
+    }
+
+    function updateTimer() {
+      const minutes = Math.floor(timeLeft / 60);
+      const seconds = timeLeft % 60;
+      document.getElementById('timer').innerHTML = `⏱️ Sisa waktu: ${minutes}:${seconds.toString().padStart(2, '0')}`;
+    }
+
+    async function resendOTP() {
+      clearInterval(timerInterval);
+      document.getElementById('verifyBtn').disabled = false;
+      await sendOTP();
+    }
+
+    function resetToStep1() {
+      clearInterval(timerInterval);
+      document.getElementById('step2').classList.remove('active');
+      document.getElementById('step1').classList.add('active');
+      document.getElementById('phone').value = '';
+      document.getElementById('sendBtn').disabled = false;
+      document.getElementById('message1').className = 'message';
+      document.getElementById('message1').textContent = '';
+    }
+  </script>
+</body>
+</html>
