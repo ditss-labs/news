@@ -156,6 +156,27 @@ export const logout = async (req, res) => {
   res.json({ success: true, message: 'Logout successful' });
 };
 
+export const setPassword = async (req, res) => {
+  try {
+    const { phone, password } = req.body;
+    if (!phone || !password || password.length < 6) {
+      return res.status(400).json({ success: false, message: 'Password minimal 6 karakter' });
+    }
+    const jid = phone.includes('@s.whatsapp.net') ? phone : `${phone}@s.whatsapp.net`;
+    const user = await User.findById(jid);
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User tidak ditemukan' });
+    }
+    const hashed = await bcrypt.hash(password, 10);
+    user.profile.password = hashed;
+    user.account.registered = true;
+    await user.save();
+    res.json({ success: true, message: 'Password berhasil diset' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
 export const me = async (req, res) => {
   try {
     const user = await User.findById(req.user.jid);
