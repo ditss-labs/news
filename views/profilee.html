@@ -1,440 +1,1625 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile - Asuma Bot</title>
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui,sans-serif; }
-    body { background:#f5f5f5; }
-    .navbar { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); padding:1rem 2rem; color:white; }
-    .nav-container { max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; }
-    .logo { font-size:1.5rem; font-weight:bold; }
-    .nav-links a { color:white; text-decoration:none; margin-left:1.5rem; padding:0.5rem; }
-    .nav-links a:hover { background:rgba(255,255,255,0.2); border-radius:5px; }
-    .container { max-width:1000px; margin:2rem auto; padding:0 2rem; }
-    .profile-header { background:white; border-radius:15px; padding:2rem; box-shadow:0 2px 10px rgba(0,0,0,0.1); margin-bottom:2rem; display:flex; gap:2rem; align-items:center; flex-wrap:wrap; }
-    .avatar { width:120px; height:120px; border-radius:50%; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); display:flex; align-items:center; justify-content:center; color:white; font-size:48px; font-weight:bold; border:4px solid white; box-shadow:0 5px 15px rgba(0,0,0,0.2); overflow:hidden; }
-    .avatar img { width:100%; height:100%; object-fit:cover; }
-    .profile-info { flex:1; }
-    .profile-info h1 { font-size:2rem; color:#333; margin-bottom:0.5rem; }
-    .profile-info .nickname { font-size:1.2rem; color:#666; margin-bottom:0.5rem; }
-    .profile-info .bio { color:#777; line-height:1.6; }
-    .stats-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:1.5rem; margin-bottom:2rem; }
-    .stat-card { background:white; border-radius:10px; padding:1.5rem; box-shadow:0 2px 10px rgba(0,0,0,0.1); }
-    .stat-title { font-size:0.9rem; color:#666; text-transform:uppercase; letter-spacing:1px; margin-bottom:0.5rem; }
-    .stat-value { font-size:2rem; font-weight:bold; color:#667eea; margin-bottom:0.5rem; }
-    .stat-desc { color:#999; font-size:0.9rem; }
-    .detail-card { background:white; border-radius:10px; padding:2rem; box-shadow:0 2px 10px rgba(0,0,0,0.1); margin-bottom:2rem; }
-    .detail-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:1rem; margin-top:1rem; }
-    .detail-item { padding:1rem; background:#f8f9fa; border-radius:8px; }
-    .detail-label { font-size:0.8rem; color:#666; margin-bottom:0.3rem; }
-    .detail-value { font-size:1.1rem; font-weight:500; color:#333; }
-    .edit-btn { background:#667eea; color:white; border:none; padding:0.8rem 2rem; border-radius:5px; font-size:1rem; cursor:pointer; margin-top:1rem; }
-    .edit-btn:hover { background:#5a67d8; }
-    .edit-form { display:none; background:white; border-radius:10px; padding:2rem; box-shadow:0 2px 10px rgba(0,0,0,0.1); margin-top:2rem; }
-    .edit-form.active { display:block; }
-    .form-group { margin-bottom:1rem; }
-    .form-group label { display:block; margin-bottom:0.5rem; color:#555; font-weight:500; }
-    .form-group input, .form-group textarea, .form-group select { width:100%; padding:0.8rem; border:2px solid #e0e0e0; border-radius:5px; font-size:1rem; }
-    .form-group input:focus, .form-group textarea:focus { outline:none; border-color:#667eea; }
-    .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-    .save-btn { background:#27ae60; color:white; border:none; padding:0.8rem 2rem; border-radius:5px; font-size:1rem; cursor:pointer; margin-right:1rem; }
-    .cancel-btn { background:#95a5a6; color:white; border:none; padding:0.8rem 2rem; border-radius:5px; font-size:1rem; cursor:pointer; }
-    .message { margin-top:1rem; padding:1rem; border-radius:5px; text-align:center; }
-    .success { background:#d4edda; color:#155724; }
-    .error { background:#f8d7da; color:#721c24; }
-    footer { text-align:center; padding:2rem; color:#666; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Profile - ASUMA Bot</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #8b5cf6;
+            --accent: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --gray-light: #cbd5e1;
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            --gradient-shine: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 40px -8px rgba(0, 0, 0, 0.2);
+            --shadow-xl: 0 30px 60px -10px rgba(99, 102, 241, 0.3);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            padding-bottom: 80px;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .bg-blob {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%);
+            border-radius: 50%;
+            filter: blur(60px);
+            animation: blobMove 20s infinite ease-in-out;
+        }
+
+        .blob1 {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .blob2 {
+            width: 500px;
+            height: 500px;
+            bottom: -150px;
+            right: -100px;
+            animation-delay: -5s;
+        }
+
+        @keyframes blobMove {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(50px, -30px) scale(1.1); }
+            66% { transform: translate(-30px, 50px) scale(0.9); }
+        }
+
+        /* Navbar */
+        .navbar {
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-light) 100%);
+            padding: 1rem 2rem;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+            color: var(--primary-light);
+            -webkit-text-fill-color: initial;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 16px;
+            border-radius: 40px;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-links a i {
+            font-size: 16px;
+        }
+
+        .nav-links a:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .nav-links a.active {
+            background: var(--gradient-primary);
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        /* Profile Header */
+        .profile-header {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 10px 40px -12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+            flex-wrap: wrap;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            animation: slideIn 0.5s ease;
+        }
+
+        .profile-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .avatar-wrapper {
+            position: relative;
+        }
+
+        .avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 56px;
+            font-weight: bold;
+            border: 4px solid white;
+            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .avatar-badge {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            width: 30px;
+            height: 30px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            border: 3px solid white;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-info h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .verified-badge {
+            background: var(--accent);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nickname {
+            font-size: 1.2rem;
+            color: var(--gray);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nickname i {
+            color: var(--primary);
+        }
+
+        .bio {
+            color: #64748b;
+            line-height: 1.6;
+            max-width: 600px;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 1rem;
+        }
+
+        .follow-btn {
+            padding: 10px 24px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .follow-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.3);
+        }
+
+        .message-btn {
+            padding: 10px 24px;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .message-btn:hover {
+            background: rgba(99, 102, 241, 0.15);
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            animation: fadeIn 0.5s ease 0.1s both;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -12px rgba(99, 102, 241, 0.15);
+        }
+
+        .stat-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover::after {
+            opacity: 1;
+        }
+
+        .stat-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .stat-title {
+            font-size: 0.9rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .stat-value {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--dark);
+            line-height: 1.2;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-desc {
+            color: var(--gray);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .stat-progress {
+            margin-top: 1rem;
+            height: 6px;
+            background: #f1f5f9;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .stat-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 3px;
+            transition: width 1s ease;
+        }
+
+        /* Detail Cards */
+        .detail-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            margin-bottom: 2rem;
+            animation: fadeIn 0.5s ease 0.2s both;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-header h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .card-header h2 i {
+            color: var(--primary);
+        }
+
+        .badge {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .detail-item {
+            padding: 1rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.02);
+        }
+
+        .detail-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(0, 0, 0, 0.1);
+            background: white;
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .detail-label i {
+            font-size: 12px;
+        }
+
+        .detail-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .detail-value.highlight {
+            color: var(--primary);
+        }
+
+        .edit-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.3);
+        }
+
+        .edit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 30px -5px rgba(99, 102, 241, 0.4);
+        }
+
+        .edit-btn i {
+            font-size: 1.1rem;
+        }
+
+        /* Edit Form */
+        .edit-form {
+            display: none;
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 20px 50px -12px rgba(0, 0, 0, 0.2);
+            margin-top: 2rem;
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            animation: slideUp 0.3s ease;
+        }
+
+        .edit-form.active {
+            display: block;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-title i {
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #4a5568;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 16px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .save-btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .save-btn:hover:not(:disabled) {
+            background: #0d9488;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(16, 185, 129, 0.3);
+        }
+
+        .cancel-btn {
+            background: #e2e8f0;
+            color: #4a5568;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 40px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .cancel-btn:hover:not(:disabled) {
+            background: #cbd5e1;
+            transform: translateY(-2px);
+        }
+
+        .save-btn:disabled,
+        .cancel-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .message {
+            margin-top: 1rem;
+            padding: 1rem;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 500;
+            animation: messageSlide 0.3s ease;
+        }
+
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 4px 20px;
+            z-index: 100;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            border-radius: 16px;
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+        }
+
+        .nav-item.active i {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 0 0 4px 4px;
+            animation: navGlow 2s infinite;
+        }
+
+        @keyframes navGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .nav-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: linear-gradient(135deg, var(--danger), #f97316);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 30px;
+            border: 2px solid white;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--gray);
+            margin-top: 2rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+            
+            .nav-links a span {
+                display: none;
+            }
+            
+            .nav-links a i {
+                font-size: 1.2rem;
+            }
+            
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .profile-info h1 {
+                font-size: 2rem;
+                justify-content: center;
+            }
+            
+            .bio {
+                margin: 0 auto;
+            }
+            
+            .profile-actions {
+                justify-content: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .detail-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .avatar {
+                width: 120px;
+                height: 120px;
+                font-size: 48px;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .slide-in {
+            animation: slideIn 0.5s ease;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Skeleton Loading */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 4px;
+            height: 20px;
+        }
+
+        @keyframes loading {
+            to { background-position: -200% 0; }
+        }
+    </style>
 </head>
 <body>
-  <nav class="navbar">
-    <div class="nav-container">
-      <div class="logo">✨ Asuma Bot</div>
-      <div class="nav-links">
-        <a href="/dashboard">Dashboard</a>
-        <a href="/profile">Profile</a>
-        <a href="#" onclick="logout()">Logout</a>
-      </div>
-    </div>
-  </nav>
-
-  <div class="container">
-    <div id="profileView">
-      <div class="profile-header">
-        <div class="avatar" id="avatar">👤</div>
-        <div class="profile-info">
-          <h1 id="displayName">Loading...</h1>
-          <div class="nickname" id="displayNickname">@...</div>
-          <div class="bio" id="displayBio"></div>
-        </div>
-      </div>
-
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-title">Level</div>
-          <div class="stat-value" id="level">0</div>
-          <div class="stat-desc" id="exp">0/100 EXP</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-title">Economy</div>
-          <div class="stat-value" id="money">Rp 0</div>
-          <div class="stat-desc" id="bank">Bank: Rp 0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-title">Crystals</div>
-          <div class="stat-value" id="crystals">0</div>
-          <div class="stat-desc" id="gems">Gems: 0</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-title">Title</div>
-          <div class="stat-value" id="title">-</div>
-          <div class="stat-desc" id="rank">Rank #1</div>
-        </div>
-      </div>
-
-      <div class="detail-card">
-        <h2 style="margin-bottom:1rem;">Detail Profile</h2>
-        <div class="detail-grid">
-          <div class="detail-item">
-            <div class="detail-label">Nomor WhatsApp</div>
-            <div class="detail-value" id="phone">-</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">JID</div>
-            <div class="detail-value" id="jid">-</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Gender</div>
-            <div class="detail-value" id="gender">-</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Age</div>
-            <div class="detail-value" id="age">-</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Location</div>
-            <div class="detail-value" id="location">-</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Timezone</div>
-            <div class="detail-value" id="timezone">Asia/Jakarta</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Email</div>
-            <div class="detail-value" id="email">-</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Verified</div>
-            <div class="detail-value" id="verified">Phone ✓, Email ✗</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Registered</div>
-            <div class="detail-value" id="registeredDate">-</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Last Active</div>
-            <div class="detail-value" id="lastActive">-</div>
-          </div>
-        </div>
-        <button class="edit-btn" onclick="showEditForm()">Edit Profile</button>
-      </div>
-
-      <div class="detail-card">
-        <h2 style="margin-bottom:1rem;">Social & Stats</h2>
-        <div class="detail-grid">
-          <div class="detail-item">
-            <div class="detail-label">Guild</div>
-            <div class="detail-value" id="guild">-</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Reputation</div>
-            <div class="detail-value" id="reputation">0</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Karma</div>
-            <div class="detail-value" id="karma">0</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Friends</div>
-            <div class="detail-value" id="friends">0</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Messages</div>
-            <div class="detail-value" id="messages">0</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Commands</div>
-            <div class="detail-value" id="commands">0</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Games Played</div>
-            <div class="detail-value" id="games">0</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Wins</div>
-            <div class="detail-value" id="wins">0</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Referral Code</div>
-            <div class="detail-value" id="referral">-</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Profile Views</div>
-            <div class="detail-value" id="profileViews">0</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="detail-card">
-        <h2 style="margin-bottom:1rem;">Website Activity</h2>
-        <div class="detail-grid">
-          <div class="detail-item">
-            <div class="detail-label">Last Visit</div>
-            <div class="detail-value" id="lastVisit">-</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Page Views</div>
-            <div class="detail-value" id="pageViews">0</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Daily Visits</div>
-            <div class="detail-value" id="dailyVisits">0</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Sessions</div>
-            <div class="detail-value" id="sessions">0</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Dark Mode</div>
-            <div class="detail-value" id="darkMode">Yes</div>
-          </div>
-          <div class="detail-item">
-            <div class="detail-label">Notif Email</div>
-            <div class="detail-value" id="emailNotif">Yes</div>
-          </div>
-        </div>
-      </div>
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="bg-blob blob1"></div>
+        <div class="bg-blob blob2"></div>
     </div>
 
-    <div id="editForm" class="edit-form">
-      <h2 style="margin-bottom:1.5rem;">Edit Profile</h2>
-      <div class="form-group">
-        <label>Name</label>
-        <input type="text" id="editName" placeholder="Nama">
-      </div>
-      <div class="form-group">
-        <label>Nickname</label>
-        <input type="text" id="editNickname" placeholder="Nickname">
-      </div>
-      <div class="form-group">
-        <label>Bio</label>
-        <textarea id="editBio" placeholder="Ceritakan tentang dirimu..." rows="3"></textarea>
-      </div>
-      <div class="form-group">
-        <label>Avatar URL</label>
-        <input type="url" id="editAvatar" placeholder="https://...">
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Gender</label>
-          <select id="editGender">
-            <option value="">Pilih gender</option>
-            <option value="male">Laki-laki</option>
-            <option value="female">Perempuan</option>
-            <option value="other">Lainnya</option>
-          </select>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-robot"></i>
+                ASUMA Bot
+            </div>
+            <div class="nav-links">
+                <a href="/dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="/profile" class="active">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </a>
+                <a href="#" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
         </div>
-        <div class="form-group">
-          <label>Age</label>
-          <input type="number" id="editAge" placeholder="Usia" min="1" max="150">
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div id="profileView">
+            <!-- Profile Header -->
+            <div class="profile-header">
+                <div class="avatar-wrapper">
+                    <div class="avatar" id="avatar">👤</div>
+                    <div class="avatar-badge">
+                        <i class="fas fa-check"></i>
+                    </div>
+                </div>
+                <div class="profile-info">
+                    <h1>
+                        <span id="displayName">Loading...</span>
+                        <span class="verified-badge" id="verifiedBadge">
+                            <i class="fas fa-check-circle"></i>
+                            Verified
+                        </span>
+                    </h1>
+                    <div class="nickname">
+                        <i class="fas fa-at"></i>
+                        <span id="displayNickname">@...</span>
+                    </div>
+                    <div class="bio" id="displayBio"></div>
+                    <div class="profile-actions">
+                        <button class="follow-btn" onclick="followUser()">
+                            <i class="fas fa-user-plus"></i>
+                            Follow
+                        </button>
+                        <button class="message-btn" onclick="messageUser()">
+                            <i class="fas fa-comment"></i>
+                            Message
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="stat-title">Level</span>
+                    </div>
+                    <div class="stat-value" id="level">0</div>
+                    <div class="stat-desc">
+                        <i class="fas fa-bolt"></i>
+                        <span id="exp">0/100 EXP</span>
+                    </div>
+                    <div class="stat-progress">
+                        <div class="stat-progress-fill" id="expProgress" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-coins"></i>
+                        </div>
+                        <span class="stat-title">Economy</span>
+                    </div>
+                    <div class="stat-value" id="money">Rp 0</div>
+                    <div class="stat-desc">
+                        <i class="fas fa-piggy-bank"></i>
+                        <span id="bank">Bank: Rp 0</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-gem"></i>
+                        </div>
+                        <span class="stat-title">Crystals</span>
+                    </div>
+                    <div class="stat-value" id="crystals">0</div>
+                    <div class="stat-desc">
+                        <i class="fas fa-crown"></i>
+                        <span id="gems">Gems: 0</span>
+                    </div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon">
+                            <i class="fas fa-medal"></i>
+                        </div>
+                        <span class="stat-title">Title</span>
+                    </div>
+                    <div class="stat-value" id="title">-</div>
+                    <div class="stat-desc">
+                        <i class="fas fa-trophy"></i>
+                        <span id="rank">Rank #1</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Personal Information -->
+            <div class="detail-card">
+                <div class="card-header">
+                    <h2>
+                        <i class="fas fa-id-card"></i>
+                        Personal Information
+                    </h2>
+                    <span class="badge">
+                        <i class="fas fa-shield-alt"></i>
+                        Private
+                    </span>
+                </div>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-phone"></i>
+                            Nomor WhatsApp
+                        </div>
+                        <div class="detail-value" id="phone">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-id-badge"></i>
+                            JID
+                        </div>
+                        <div class="detail-value" id="jid">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-venus-mars"></i>
+                            Gender
+                        </div>
+                        <div class="detail-value" id="gender">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-birthday-cake"></i>
+                            Age
+                        </div>
+                        <div class="detail-value" id="age">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-map-marker-alt"></i>
+                            Location
+                        </div>
+                        <div class="detail-value" id="location">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-clock"></i>
+                            Timezone
+                        </div>
+                        <div class="detail-value" id="timezone">Asia/Jakarta</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-envelope"></i>
+                            Email
+                        </div>
+                        <div class="detail-value" id="email">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-check-circle"></i>
+                            Verified
+                        </div>
+                        <div class="detail-value" id="verified">Phone ✓, Email ✗</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-calendar-alt"></i>
+                            Registered
+                        </div>
+                        <div class="detail-value" id="registeredDate">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-history"></i>
+                            Last Active
+                        </div>
+                        <div class="detail-value" id="lastActive">-</div>
+                    </div>
+                </div>
+                <button class="edit-btn" onclick="showEditForm()">
+                    <i class="fas fa-edit"></i>
+                    Edit Profile
+                </button>
+            </div>
+
+            <!-- Social & Stats -->
+            <div class="detail-card">
+                <div class="card-header">
+                    <h2>
+                        <i class="fas fa-users"></i>
+                        Social & Stats
+                    </h2>
+                    <span class="badge">
+                        <i class="fas fa-globe"></i>
+                        Public
+                    </span>
+                </div>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-shield"></i>
+                            Guild
+                        </div>
+                        <div class="detail-value" id="guild">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-star"></i>
+                            Reputation
+                        </div>
+                        <div class="detail-value highlight" id="reputation">0</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-heart"></i>
+                            Karma
+                        </div>
+                        <div class="detail-value highlight" id="karma">0</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-user-friends"></i>
+                            Friends
+                        </div>
+                        <div class="detail-value" id="friends">0</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-comment-dots"></i>
+                            Messages
+                        </div>
+                        <div class="detail-value" id="messages">0</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-terminal"></i>
+                            Commands
+                        </div>
+                        <div class="detail-value" id="commands">0</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-gamepad"></i>
+                            Games Played
+                        </div>
+                        <div class="detail-value" id="games">0</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-trophy"></i>
+                            Wins
+                        </div>
+                        <div class="detail-value" id="wins">0</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-qrcode"></i>
+                            Referral Code
+                        </div>
+                        <div class="detail-value" id="referral">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-eye"></i>
+                            Profile Views
+                        </div>
+                        <div class="detail-value" id="profileViews">0</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Website Activity -->
+            <div class="detail-card">
+                <div class="card-header">
+                    <h2>
+                        <i class="fas fa-chart-line"></i>
+                        Website Activity
+                    </h2>
+                    <span class="badge">
+                        <i class="fas fa-clock"></i>
+                        Real-time
+                    </span>
+                </div>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-calendar-check"></i>
+                            Last Visit
+                        </div>
+                        <div class="detail-value" id="lastVisit">-</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-eye"></i>
+                            Page Views
+                        </div>
+                        <div class="detail-value" id="pageViews">0</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-sun"></i>
+                            Daily Visits
+                        </div>
+                        <div class="detail-value" id="dailyVisits">0</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-history"></i>
+                            Sessions
+                        </div>
+                        <div class="detail-value" id="sessions">0</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-moon"></i>
+                            Dark Mode
+                        </div>
+                        <div class="detail-value" id="darkMode">Yes</div>
+                    </div>
+                    <div class="detail-item">
+                        <div class="detail-label">
+                            <i class="fas fa-bell"></i>
+                            Notif Email
+                        </div>
+                        <div class="detail-value" id="emailNotif">Yes</div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-      <div class="form-row">
-        <div class="form-group">
-          <label>Country</label>
-          <input type="text" id="editCountry" placeholder="Negara">
+
+        <!-- Edit Form -->
+        <div id="editForm" class="edit-form">
+            <div class="form-title">
+                <i class="fas fa-user-edit"></i>
+                Edit Profile
+            </div>
+            
+            <div class="form-group">
+                <label>Nama Lengkap</label>
+                <input type="text" id="editName" placeholder="Masukkan nama lengkap">
+            </div>
+            
+            <div class="form-group">
+                <label>Nickname</label>
+                <input type="text" id="editNickname" placeholder="Masukkan nickname">
+            </div>
+            
+            <div class="form-group">
+                <label>Bio</label>
+                <textarea id="editBio" placeholder="Ceritakan tentang dirimu..." rows="3"></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label>Avatar URL</label>
+                <input type="url" id="editAvatar" placeholder="https://example.com/avatar.jpg">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Gender</label>
+                    <select id="editGender">
+                        <option value="">Pilih gender</option>
+                        <option value="male">Laki-laki</option>
+                        <option value="female">Perempuan</option>
+                        <option value="other">Lainnya</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Age</label>
+                    <input type="number" id="editAge" placeholder="Usia" min="1" max="150">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Country</label>
+                    <input type="text" id="editCountry" placeholder="Negara">
+                </div>
+                <div class="form-group">
+                    <label>City</label>
+                    <input type="text" id="editCity" placeholder="Kota">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="editEmail" placeholder="email@example.com">
+            </div>
+            
+            <div class="form-group">
+                <label>Theme</label>
+                <select id="editTheme">
+                    <option value="dark">Dark Mode</option>
+                    <option value="light">Light Mode</option>
+                </select>
+            </div>
+            
+            <div class="form-actions">
+                <button class="save-btn" onclick="saveProfile()">
+                    <i class="fas fa-save"></i>
+                    Save Changes
+                </button>
+                <button class="cancel-btn" onclick="hideEditForm()">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+            </div>
+            
+            <div id="editMessage" class="message"></div>
         </div>
-        <div class="form-group">
-          <label>City</label>
-          <input type="text" id="editCity" placeholder="Kota">
-        </div>
-      </div>
-      <div class="form-group">
-        <label>Email</label>
-        <input type="email" id="editEmail" placeholder="email@example.com">
-      </div>
-      <div class="form-group">
-        <label>Theme</label>
-        <select id="editTheme">
-          <option value="dark">Dark</option>
-          <option value="light">Light</option>
-        </select>
-      </div>
-      <div style="display:flex; gap:1rem; margin-top:1.5rem;">
-        <button class="save-btn" onclick="saveProfile()">Save Changes</button>
-        <button class="cancel-btn" onclick="hideEditForm()">Cancel</button>
-      </div>
-      <div id="editMessage" class="message"></div>
     </div>
-  </div>
 
-  <footer>© 2025 Asuma Bot</footer>
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="/" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="/dashboard" class="nav-item">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="/create" class="nav-item">
+            <i class="fas fa-plus-circle"></i>
+            <span>Create</span>
+            <span class="nav-badge">+</span>
+        </a>
+        <a href="/analytics" class="nav-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Analytics</span>
+        </a>
+        <a href="/profile" class="nav-item active">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
 
-  <script>
-    const token = localStorage.getItem('token');
-    if (!token) window.location.href = '/login';
+    <!-- Footer -->
+    <footer>
+        © 2025 ASUMA Bot. All rights reserved.
+    </footer>
 
-    let userData = null;
+    <script>
+        // ORIGINAL AUTH CODE - TIDAK DIUBAH!
+        const token = localStorage.getItem('token');
+        if (!token) window.location.href = '/login';
 
-    async function fetchProfile() {
-      try {
-        const res = await fetch('/api/auth/me', {
-          headers: { 'Authorization': `Bearer ${token}` }
-        });
-        const data = await res.json();
-        if (data.success) {
-          userData = data.user;
-          renderProfile(userData);
-        } else {
-          logout();
+        let userData = null;
+
+        async function fetchProfile() {
+            try {
+                const res = await fetch('/api/auth/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await res.json();
+                if (data.success) {
+                    userData = data.user;
+                    renderProfile(userData);
+                } else {
+                    logout();
+                }
+            } catch (error) {
+                console.error(error);
+                document.getElementById('displayName').textContent = 'Error loading profile';
+            }
         }
-      } catch (error) {
-        console.error(error);
-        document.getElementById('displayName').textContent = 'Error loading profile';
-      }
-    }
 
-    function renderProfile(user) {
-      document.getElementById('displayName').textContent = user.name || 'User';
-      document.getElementById('displayNickname').textContent = user.nickname ? '@' + user.nickname : '@' + (user.name || 'user');
-      document.getElementById('displayBio').textContent = user.bio || 'Belum ada bio';
-      
-      const avatar = document.getElementById('avatar');
-      if (user.avatar) {
-        avatar.innerHTML = `<img src="${user.avatar}" alt="avatar" onerror="this.onerror=null; this.parentElement.innerHTML='👤';">`;
-      } else {
-        avatar.textContent = user.name?.charAt(0).toUpperCase() || '👤';
-      }
+        function renderProfile(user) {
+            // Basic info
+            document.getElementById('displayName').textContent = user.name || 'User';
+            document.getElementById('displayNickname').textContent = user.nickname ? '@' + user.nickname : '@' + (user.name || 'user');
+            document.getElementById('displayBio').textContent = user.bio || 'Belum ada bio';
+            
+            // Avatar
+            const avatar = document.getElementById('avatar');
+            if (user.avatar) {
+                avatar.innerHTML = `<img src="${user.avatar}" alt="avatar" onerror="this.onerror=null; this.parentElement.innerHTML='👤';">`;
+            } else {
+                avatar.textContent = user.name?.charAt(0).toUpperCase() || '👤';
+            }
 
-      document.getElementById('level').textContent = user.level || 0;
-      document.getElementById('exp').textContent = `${user.exp || 0}/${user.nextLevelExp || 100} EXP`;
-      document.getElementById('money').textContent = 'Rp ' + (user.money || 0).toLocaleString();
-      document.getElementById('bank').textContent = 'Bank: Rp ' + (user.bank || 0).toLocaleString();
-      document.getElementById('crystals').textContent = user.crystals || 0;
-      document.getElementById('gems').textContent = 'Gems: ' + (user.gems || 0);
-      document.getElementById('title').textContent = user.title || '-';
-      document.getElementById('rank').textContent = 'Rank #' + (user.rank || 1);
-      
-      document.getElementById('phone').textContent = user.phone || '-';
-      document.getElementById('jid').textContent = user.jid || '-';
-      document.getElementById('gender').textContent = user.gender || '-';
-      document.getElementById('age').textContent = user.age || '-';
-      document.getElementById('location').textContent = user.city && user.country ? `${user.city}, ${user.country}` : '-';
-      document.getElementById('timezone').textContent = user.timezone || 'Asia/Jakarta';
-      document.getElementById('email').textContent = user.email || '-';
-      document.getElementById('verified').textContent = `Phone ${user.isPhoneVerified ? '✓' : '✗'}, Email ${user.isEmailVerified ? '✓' : '✗'}`;
-      document.getElementById('registeredDate').textContent = user.registeredDate ? new Date(user.registeredDate).toLocaleDateString() : '-';
-      document.getElementById('lastActive').textContent = user.lastActive ? new Date(user.lastActive).toLocaleString() : '-';
+            // Verified badge
+            const verifiedBadge = document.getElementById('verifiedBadge');
+            if (user.isPhoneVerified) {
+                verifiedBadge.style.display = 'inline-flex';
+            } else {
+                verifiedBadge.style.display = 'none';
+            }
 
-      document.getElementById('guild').textContent = user.guild || '-';
-      document.getElementById('reputation').textContent = user.reputation || 0;
-      document.getElementById('karma').textContent = user.karma || 0;
-      document.getElementById('friends').textContent = user.friends || 0;
-      document.getElementById('messages').textContent = user.messagesSent || 0;
-      document.getElementById('commands').textContent = user.commandsUsed || 0;
-      document.getElementById('games').textContent = user.gamesPlayed || 0;
-      document.getElementById('wins').textContent = user.wins || 0;
-      document.getElementById('referral').textContent = user.referralCode || '-';
-      document.getElementById('profileViews').textContent = user.profileViews || 0;
+            // Stats
+            document.getElementById('level').textContent = user.level || 0;
+            document.getElementById('exp').textContent = `${user.exp || 0}/${user.nextLevelExp || 100} EXP`;
+            const expPercent = ((user.exp || 0) / (user.nextLevelExp || 100)) * 100;
+            document.getElementById('expProgress').style.width = expPercent + '%';
+            
+            document.getElementById('money').textContent = 'Rp ' + (user.money || 0).toLocaleString();
+            document.getElementById('bank').textContent = 'Bank: Rp ' + (user.bank || 0).toLocaleString();
+            document.getElementById('crystals').textContent = user.crystals || 0;
+            document.getElementById('gems').textContent = 'Gems: ' + (user.gems || 0);
+            document.getElementById('title').textContent = user.title || '-';
+            document.getElementById('rank').textContent = 'Rank #' + (user.rank || 1);
+            
+            // Personal info
+            document.getElementById('phone').textContent = user.phone || '-';
+            document.getElementById('jid').textContent = user.jid || '-';
+            document.getElementById('gender').textContent = user.gender ? 
+                (user.gender === 'male' ? 'Laki-laki' : user.gender === 'female' ? 'Perempuan' : 'Lainnya') : '-';
+            document.getElementById('age').textContent = user.age || '-';
+            document.getElementById('location').textContent = user.city && user.country ? `${user.city}, ${user.country}` : '-';
+            document.getElementById('timezone').textContent = user.timezone || 'Asia/Jakarta';
+            document.getElementById('email').textContent = user.email || '-';
+            document.getElementById('verified').textContent = `Phone ${user.isPhoneVerified ? '✓' : '✗'}, Email ${user.isEmailVerified ? '✓' : '✗'}`;
+            
+            // Dates
+            if (user.registeredDate) {
+                document.getElementById('registeredDate').textContent = new Date(user.registeredDate).toLocaleDateString('id-ID', {
+                    day: 'numeric',
+                    month: 'long',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+            
+            if (user.lastActive) {
+                document.getElementById('lastActive').textContent = new Date(user.lastActive).toLocaleString('id-ID', {
+                    day: 'numeric',
+                    month: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
 
-      document.getElementById('lastVisit').textContent = user.lastVisit ? new Date(user.lastVisit).toLocaleString() : '-';
-      document.getElementById('pageViews').textContent = user.pageViews || 0;
-      document.getElementById('dailyVisits').textContent = user.dailyVisits || 0;
-      document.getElementById('sessions').textContent = user.sessions || 0;
-      document.getElementById('darkMode').textContent = user.darkMode ? 'Yes' : 'No';
-      document.getElementById('emailNotif').textContent = user.emailNotifications ? 'Yes' : 'No';
+            // Social stats
+            document.getElementById('guild').textContent = user.guild || '-';
+            document.getElementById('reputation').textContent = user.reputation || 0;
+            document.getElementById('karma').textContent = user.karma || 0;
+            document.getElementById('friends').textContent = user.friends || 0;
+            document.getElementById('messages').textContent = user.messagesSent || 0;
+            document.getElementById('commands').textContent = user.commandsUsed || 0;
+            document.getElementById('games').textContent = user.gamesPlayed || 0;
+            document.getElementById('wins').textContent = user.wins || 0;
+            document.getElementById('referral').textContent = user.referralCode || '-';
+            document.getElementById('profileViews').textContent = user.profileViews || 0;
 
-      document.getElementById('editName').value = user.name || '';
-      document.getElementById('editNickname').value = user.nickname || '';
-      document.getElementById('editBio').value = user.bio || '';
-      document.getElementById('editAvatar').value = user.avatar || '';
-      document.getElementById('editGender').value = user.gender || '';
-      document.getElementById('editAge').value = user.age || '';
-      document.getElementById('editCountry').value = user.country || '';
-      document.getElementById('editCity').value = user.city || '';
-      document.getElementById('editEmail').value = user.email || '';
-      document.getElementById('editTheme').value = user.darkMode ? 'dark' : 'light';
-    }
+            // Website activity
+            if (user.lastVisit) {
+                document.getElementById('lastVisit').textContent = new Date(user.lastVisit).toLocaleString('id-ID', {
+                    day: 'numeric',
+                    month: 'short',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+            }
+            document.getElementById('pageViews').textContent = user.pageViews || 0;
+            document.getElementById('dailyVisits').textContent = user.dailyVisits || 0;
+            document.getElementById('sessions').textContent = user.sessions || 0;
+            document.getElementById('darkMode').textContent = user.darkMode ? 'Yes' : 'No';
+            document.getElementById('emailNotif').textContent = user.emailNotifications ? 'Yes' : 'No';
 
-    function showEditForm() {
-      document.getElementById('editForm').classList.add('active');
-      window.scrollTo({ top: document.getElementById('editForm').offsetTop, behavior: 'smooth' });
-    }
-
-    function hideEditForm() {
-      document.getElementById('editForm').classList.remove('active');
-      document.getElementById('editMessage').textContent = '';
-    }
-
-    async function saveProfile() {
-      const data = {
-        name: document.getElementById('editName').value,
-        nickname: document.getElementById('editNickname').value,
-        bio: document.getElementById('editBio').value,
-        avatar: document.getElementById('editAvatar').value,
-        gender: document.getElementById('editGender').value,
-        age: document.getElementById('editAge').value ? parseInt(document.getElementById('editAge').value) : null,
-        country: document.getElementById('editCountry').value,
-        city: document.getElementById('editCity').value,
-        email: document.getElementById('editEmail').value,
-        darkMode: document.getElementById('editTheme').value === 'dark'
-      };
-
-      const btn = document.querySelector('.save-btn');
-      const msg = document.getElementById('editMessage');
-      
-      btn.disabled = true;
-      msg.className = 'message';
-      msg.textContent = 'Menyimpan...';
-
-      try {
-        const res = await fetch('/api/profile/update', {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`
-          },
-          body: JSON.stringify(data)
-        });
-        const result = await res.json();
-        if (result.success) {
-          msg.className = 'message success';
-          msg.textContent = 'Profile berhasil diupdate!';
-          await fetchProfile();
-          setTimeout(() => {
-            hideEditForm();
-            msg.textContent = '';
-          }, 1500);
-        } else {
-          msg.className = 'message error';
-          msg.textContent = result.message;
+            // Edit form values
+            document.getElementById('editName').value = user.name || '';
+            document.getElementById('editNickname').value = user.nickname || '';
+            document.getElementById('editBio').value = user.bio || '';
+            document.getElementById('editAvatar').value = user.avatar || '';
+            document.getElementById('editGender').value = user.gender || '';
+            document.getElementById('editAge').value = user.age || '';
+            document.getElementById('editCountry').value = user.country || '';
+            document.getElementById('editCity').value = user.city || '';
+            document.getElementById('editEmail').value = user.email || '';
+            document.getElementById('editTheme').value = user.darkMode ? 'dark' : 'light';
         }
-      } catch (error) {
-        msg.className = 'message error';
-        msg.textContent = 'Error: ' + error.message;
-      } finally {
-        btn.disabled = false;
-      }
-    }
 
-    function logout() {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      window.location.href = '/';
-    }
+        function showEditForm() {
+            document.getElementById('editForm').classList.add('active');
+            window.scrollTo({ top: document.getElementById('editForm').offsetTop - 100, behavior: 'smooth' });
+        }
 
-    fetchProfile();
-  </script>
+        function hideEditForm() {
+            document.getElementById('editForm').classList.remove('active');
+            document.getElementById('editMessage').textContent = '';
+            document.getElementById('editMessage').className = 'message';
+        }
+
+        async function saveProfile() {
+            const data = {
+                name: document.getElementById('editName').value,
+                nickname: document.getElementById('editNickname').value,
+                bio: document.getElementById('editBio').value,
+                avatar: document.getElementById('editAvatar').value,
+                gender: document.getElementById('editGender').value,
+                age: document.getElementById('editAge').value ? parseInt(document.getElementById('editAge').value) : null,
+                country: document.getElementById('editCountry').value,
+                city: document.getElementById('editCity').value,
+                email: document.getElementById('editEmail').value,
+                darkMode: document.getElementById('editTheme').value === 'dark'
+            };
+
+            const btn = document.querySelector('.save-btn');
+            const msg = document.getElementById('editMessage');
+            
+            btn.disabled = true;
+            btn.innerHTML = '<div class="loading-spinner"></div> Menyimpan...';
+            msg.className = 'message';
+            msg.textContent = 'Menyimpan perubahan...';
+
+            try {
+                const res = await fetch('/api/profile/update', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+                const result = await res.json();
+                
+                if (result.success) {
+                    msg.className = 'message success';
+                    msg.innerHTML = '<i class="fas fa-check-circle"></i> Profile berhasil diupdate!';
+                    
+                    // Refresh profile data
+                    await fetchProfile();
+                    
+                    setTimeout(() => {
+                        hideEditForm();
+                        msg.textContent = '';
+                    }, 1500);
+                } else {
+                    msg.className = 'message error';
+                    msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> ' + (result.message || 'Gagal update profile');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+                }
+            } catch (error) {
+                msg.className = 'message error';
+                msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> Error: ' + error.message;
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-save"></i> Save Changes';
+            }
+        }
+
+        // ADDITIONAL UI FUNCTIONS
+        function followUser() {
+            alert('Follow feature coming soon!');
+        }
+
+        function messageUser() {
+            alert('Message feature coming soon!');
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/';
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchProfile();
+            
+            // Add animation delays to stat cards
+            document.querySelectorAll('.stat-card').forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
 </body>
 </html>
