@@ -1,84 +1,1251 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - Asuma Bot</title>
-  <style>
-    * { margin:0; padding:0; box-sizing:border-box; font-family:system-ui,sans-serif; }
-    body { background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); min-height:100vh; display:flex; align-items:center; justify-content:center; padding:20px; }
-    .container { background:white; border-radius:20px; box-shadow:0 20px 60px rgba(0,0,0,0.3); width:100%; max-width:400px; padding:40px; }
-    h1 { color:#333; text-align:center; margin-bottom:10px; font-size:28px; }
-    .subtitle { text-align:center; color:#666; margin-bottom:30px; font-size:14px; }
-    .form-group { margin-bottom:20px; }
-    label { display:block; margin-bottom:8px; color:#555; font-weight:500; font-size:14px; }
-    input { width:100%; padding:12px 15px; border:2px solid #e0e0e0; border-radius:10px; font-size:16px; transition:border 0.3s; }
-    input:focus { outline:none; border-color:#667eea; }
-    button { width:100%; padding:14px; background:linear-gradient(135deg,#667eea 0%,#764ba2 100%); color:white; border:none; border-radius:10px; font-size:16px; font-weight:600; cursor:pointer; transition:transform 0.2s; }
-    button:hover { transform:translateY(-2px); }
-    button:disabled { opacity:0.5; cursor:not-allowed; }
-    .register-link { text-align:center; margin-top:20px; font-size:14px; }
-    .register-link a { color:#667eea; text-decoration:none; font-weight:600; }
-    .register-link a:hover { text-decoration:underline; }
-    .message { margin-top:15px; padding:10px; border-radius:5px; text-align:center; font-size:14px; }
-    .error { background:#fee; color:#e74c3c; }
-    .success { background:#e8f8f0; color:#27ae60; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Login - ASUMA Bot</title>
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #8b5cf6;
+            --accent: #10b981;
+            --dark: #0f172a;
+            --dark-light: #1e293b;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #a855f7 100%);
+            --gradient-shine: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 40px -8px rgba(0, 0, 0, 0.2);
+            --shadow-xl: 0 30px 60px -10px rgba(99, 102, 241, 0.3);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .bg-blob {
+            position: absolute;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border-radius: 50%;
+            filter: blur(60px);
+            animation: blobMove 20s infinite ease-in-out;
+        }
+
+        .blob1 {
+            width: 400px;
+            height: 400px;
+            top: -100px;
+            left: -100px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
+            animation-delay: 0s;
+        }
+
+        .blob2 {
+            width: 500px;
+            height: 500px;
+            bottom: -150px;
+            right: -100px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(168, 85, 247, 0.15));
+            animation-delay: -5s;
+        }
+
+        .blob3 {
+            width: 300px;
+            height: 300px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(16, 185, 129, 0.1);
+            animation-delay: -10s;
+        }
+
+        @keyframes blobMove {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(50px, -30px) scale(1.1); }
+            66% { transform: translate(-30px, 50px) scale(0.9); }
+        }
+
+        /* Floating Orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .orb1 {
+            width: 150px;
+            height: 150px;
+            top: 10%;
+            right: 5%;
+            background: radial-gradient(circle at 30% 30%, rgba(99, 102, 241, 0.2), transparent 70%);
+            animation: float 15s infinite;
+        }
+
+        .orb2 {
+            width: 200px;
+            height: 200px;
+            bottom: 10%;
+            left: 5%;
+            background: radial-gradient(circle at 70% 70%, rgba(139, 92, 246, 0.2), transparent 70%);
+            animation: float 18s infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(40px, -30px) rotate(5deg); }
+            50% { transform: translate(20px, 40px) rotate(-5deg); }
+            75% { transform: translate(-30px, 20px) rotate(3deg); }
+        }
+
+        /* Particles */
+        .particles {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: particleFloat 10s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            from { transform: translateY(100vh) rotate(0deg); }
+            to { transform: translateY(-100vh) rotate(360deg); }
+        }
+
+        /* Main Container */
+        .container {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 460px;
+            margin: 0 auto;
+        }
+
+        /* Glass Card Effect */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px) saturate(180%);
+            -webkit-backdrop-filter: blur(16px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 32px;
+            box-shadow: 
+                0 30px 60px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(255, 255, 255, 0.02),
+                inset 0 1px 1px rgba(255, 255, 255, 0.1);
+            padding: 32px 28px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: cardAppear 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 40px 80px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(255, 255, 255, 0.05),
+                inset 0 1px 2px rgba(255, 255, 255, 0.15);
+        }
+
+        @keyframes cardAppear {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo-wrapper {
+            display: inline-flex;
+            margin-bottom: 24px;
+            position: relative;
+        }
+
+        .logo-glow {
+            position: absolute;
+            inset: -20px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.3), transparent 70%);
+            border-radius: 50%;
+            filter: blur(20px);
+            animation: pulseGlow 3s infinite;
+        }
+
+        @keyframes pulseGlow {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.2); }
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6, #a855f7);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 
+                0 15px 30px -5px rgba(99, 102, 241, 0.5),
+                0 0 0 2px rgba(255, 255, 255, 0.1);
+            position: relative;
+            overflow: hidden;
+            animation: rotateLogo 20s infinite linear;
+        }
+
+        @keyframes rotateLogo {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .logo i {
+            font-size: 36px;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            animation: iconFloat 3s infinite ease-in-out;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        h1 {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .subtitle {
+            color: var(--gray);
+            font-size: 15px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .subtitle i {
+            color: var(--primary-light);
+            font-size: 14px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #10b981;
+            margin-left: 8px;
+        }
+
+        /* Form Groups */
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #cbd5e1;
+            font-weight: 600;
+            font-size: 14px;
+            letter-spacing: 0.3px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 16px;
+            color: var(--gray);
+            font-size: 16px;
+            transition: color 0.3s ease;
+            z-index: 1;
+        }
+
+        input {
+            width: 100%;
+            padding: 16px 16px 16px 48px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(255, 255, 255, 0.05);
+            border-radius: 18px;
+            font-size: 15px;
+            font-weight: 500;
+            color: white;
+            transition: all 0.3s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+            font-weight: 400;
+        }
+
+        input:hover {
+            border-color: rgba(99, 102, 241, 0.3);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #6366f1;
+            background: rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
+
+        input:focus + .input-icon {
+            color: #6366f1;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 16px;
+            background: none;
+            border: none;
+            color: var(--gray);
+            cursor: pointer;
+            font-size: 16px;
+            padding: 8px;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .password-toggle:hover {
+            color: #6366f1;
+            transform: scale(1.1);
+        }
+
+        /* Password Strength Indicator */
+        .password-strength {
+            margin-top: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .strength-bar {
+            flex: 1;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .strength-text {
+            font-size: 12px;
+            color: var(--gray);
+            min-width: 60px;
+        }
+
+        /* Options */
+        .options {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 28px;
+        }
+
+        .checkbox-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .checkbox-wrapper input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #6366f1;
+            cursor: pointer;
+        }
+
+        .checkbox-label {
+            color: var(--gray);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .forgot-link {
+            color: var(--primary-light);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .forgot-link::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            transition: width 0.3s ease;
+        }
+
+        .forgot-link:hover::after {
+            width: 100%;
+        }
+
+        /* Login Button */
+        .login-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            border: none;
+            border-radius: 20px;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.4);
+        }
+
+        .login-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.7s ease;
+        }
+
+        .login-btn:hover:not(:disabled)::before {
+            left: 100%;
+        }
+
+        .login-btn:hover:not(:disabled) {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 30px -5px rgba(99, 102, 241, 0.5);
+        }
+
+        .login-btn:active:not(:disabled) {
+            transform: translateY(-1px);
+        }
+
+        .login-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-icon {
+            font-size: 18px;
+            transition: transform 0.3s ease;
+        }
+
+        .login-btn:hover:not(:disabled) .btn-icon {
+            transform: translateX(5px);
+        }
+
+        .loading-spinner {
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Register Link */
+        .register-wrapper {
+            margin-top: 28px;
+            text-align: center;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .register-text {
+            color: var(--gray);
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .register-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 15px;
+            padding: 12px 28px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .register-link i {
+            font-size: 14px;
+            transition: transform 0.3s ease;
+        }
+
+        .register-link:hover {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(99, 102, 241, 0.3);
+            transform: translateX(5px);
+        }
+
+        .register-link:hover i {
+            transform: translateX(3px);
+        }
+
+        /* Message Toast */
+        .message-container {
+            margin-top: 20px;
+            position: relative;
+        }
+
+        .message {
+            padding: 16px 20px;
+            border-radius: 16px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            animation: messageSlide 0.3s ease;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .message i {
+            font-size: 16px;
+        }
+
+        .error {
+            background: rgba(239, 68, 68, 0.1);
+            color: #fca5a5;
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .success {
+            background: rgba(16, 185, 129, 0.1);
+            color: #6ee7b7;
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .info {
+            background: rgba(59, 130, 246, 0.1);
+            color: #93c5fd;
+            border-color: rgba(59, 130, 246, 0.2);
+        }
+
+        @keyframes messageSlide {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Bottom Navigation - Baru nih! */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 4px 20px;
+            z-index: 100;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            border-radius: 16px;
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .nav-item.active {
+            color: white;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .nav-item.active i {
+            color: #6366f1;
+            transform: translateY(-2px);
+        }
+
+        .nav-item.active::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: linear-gradient(90deg, #6366f1, #8b5cf6);
+            border-radius: 0 0 4px 4px;
+            animation: navGlow 2s infinite;
+        }
+
+        @keyframes navGlow {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        .nav-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 30px;
+            border: 2px solid rgba(15, 23, 42, 0.9);
+            animation: pulse 2s infinite;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .quick-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            color: var(--gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-size: 18px;
+        }
+
+        .quick-btn:hover {
+            background: rgba(99, 102, 241, 0.15);
+            color: white;
+            transform: translateY(-3px);
+            border-color: #6366f1;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 32px;
+            text-align: center;
+            color: var(--gray);
+            font-size: 12px;
+        }
+
+        .footer a {
+            color: var(--primary-light);
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Responsive */
+        @media (max-width: 640px) {
+            .glass-card {
+                padding: 24px 20px;
+                border-radius: 28px;
+                margin-bottom: 80px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .logo {
+                width: 70px;
+                height: 70px;
+            }
+
+            .logo i {
+                font-size: 32px;
+            }
+
+            .bottom-nav {
+                padding-bottom: 16px;
+            }
+
+            .nav-item {
+                font-size: 11px;
+                padding: 6px 8px;
+            }
+
+            .nav-item i {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .glass-card {
+                padding: 20px 16px;
+            }
+
+            .options {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+        }
+
+        /* Animations */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .shake {
+            animation: shake 0.5s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        /* Hide number input arrows */
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+
+        /* Floating Particles */
+        .floating-particle {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            pointer-events: none;
+            animation: particleFloat 8s infinite linear;
+        }
+    </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🔐 Login</h1>
-    <p class="subtitle">Masuk dengan nomor dan password</p>
-    <div class="form-group">
-      <label>Nomor WhatsApp</label>
-      <input type="text" id="phone" placeholder="6281234567890">
+    <!-- Animated Background -->
+    <div class="bg-animation">
+        <div class="bg-blob blob1"></div>
+        <div class="bg-blob blob2"></div>
+        <div class="bg-blob blob3"></div>
     </div>
-    <div class="form-group">
-      <label>Password</label>
-      <input type="password" id="password" placeholder="********">
+
+    <!-- Floating Orbs -->
+    <div class="orb orb1"></div>
+    <div class="orb orb2"></div>
+
+    <!-- Particles -->
+    <div class="particles" id="particles"></div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <div class="glass-card">
+            <!-- Header -->
+            <div class="header">
+                <div class="logo-wrapper">
+                    <div class="logo-glow"></div>
+                    <div class="logo">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                </div>
+                <h1>Welcome Back! 👋</h1>
+                <div class="subtitle">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Masuk ke akun ASUMA Bot</span>
+                    <span class="badge">
+                        <i class="fas fa-lock"></i>
+                        Secure
+                    </span>
+                </div>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" onsubmit="event.preventDefault(); login()">
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-phone-alt" style="margin-right: 6px;"></i>
+                        Nomor WhatsApp
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-phone-alt input-icon"></i>
+                        <input 
+                            type="text" 
+                            id="phone" 
+                            placeholder="6281234567890"
+                            autocomplete="off"
+                        >
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="fas fa-lock" style="margin-right: 6px;"></i>
+                        Password
+                    </label>
+                    <div class="input-wrapper">
+                        <i class="fas fa-lock input-icon"></i>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            placeholder="••••••••"
+                            autocomplete="current-password"
+                        >
+                        <button type="button" class="password-toggle" onclick="togglePassword()">
+                            <i class="far fa-eye" id="toggleIcon"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Password Strength Indicator (optional) -->
+                    <div class="password-strength" id="passwordStrength" style="display: none;">
+                        <div class="strength-bar">
+                            <div class="strength-fill" id="strengthFill"></div>
+                        </div>
+                        <span class="strength-text" id="strengthText">Kekuatan</span>
+                    </div>
+                </div>
+
+                <!-- Options -->
+                <div class="options">
+                    <label class="checkbox-wrapper">
+                        <input type="checkbox" id="remember">
+                        <span class="checkbox-label">Ingat saya</span>
+                    </label>
+                    <a href="#" class="forgot-link">Lupa password?</a>
+                </div>
+
+                <!-- Login Button -->
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <span>Login</span>
+                    <i class="fas fa-arrow-right btn-icon"></i>
+                </button>
+            </form>
+
+            <!-- Register Link -->
+            <div class="register-wrapper">
+                <div class="register-text">Belum punya akun?</div>
+                <a href="/register" class="register-link">
+                    <span>Daftar Sekarang</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions">
+                <a href="#" class="quick-btn" title="Bantuan">
+                    <i class="fas fa-question"></i>
+                </a>
+                <a href="#" class="quick-btn" title="FAQ">
+                    <i class="fas fa-info"></i>
+                </a>
+                <a href="#" class="quick-btn" title="Contact">
+                    <i class="fas fa-envelope"></i>
+                </a>
+            </div>
+
+            <!-- Message Container -->
+            <div class="message-container">
+                <div id="message" class="message" style="display: none;"></div>
+            </div>
+
+            <!-- Footer -->
+            <div class="footer">
+                <p>© 2024 ASUMA Bot. All rights reserved.</p>
+                <p style="margin-top: 6px;">
+                    <a href="#">Privacy</a> • <a href="#">Terms</a> • <a href="#">Security</a>
+                </p>
+            </div>
+        </div>
     </div>
-    <button onclick="login()" id="loginBtn">Login</button>
-    <div class="register-link">
-      Belum punya akun? <a href="/register">Register</a>
-    </div>
-    <div id="message" class="message"></div>
-  </div>
-  <script>
-    async function login() {
-      const phone = document.getElementById('phone').value;
-      const password = document.getElementById('password').value;
-      const btn = document.getElementById('loginBtn');
-      const msg = document.getElementById('message');
-      if (!phone || !password) {
-        msg.className = 'message error';
-        msg.textContent = 'Nomor dan password harus diisi';
-        return;
-      }
-      btn.disabled = true;
-      msg.className = 'message';
-      msg.textContent = 'Memproses...';
-      try {
-        const res = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ phone, password })
-        });
-        const data = await res.json();
-        if (data.success) {
-          localStorage.setItem('token', data.token);
-          localStorage.setItem('user', JSON.stringify(data.user));
-          window.location.href = '/dashboard';
-        } else {
-          msg.className = 'message error';
-          msg.textContent = data.message;
-          btn.disabled = false;
+
+    <!-- Bottom Navigation - Yang diminta! -->
+    <nav class="bottom-nav">
+        <a href="/" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="/dashboard" class="nav-item">
+            <i class="fas fa-tachometer-alt"></i>
+            <span>Dashboard</span>
+        </a>
+        <a href="/create" class="nav-item">
+            <i class="fas fa-plus-circle"></i>
+            <span>Create</span>
+        </a>
+        <a href="/analytics" class="nav-item active">
+            <i class="fas fa-chart-line"></i>
+            <span>Analytics</span>
+            <span class="nav-badge">12</span>
+        </a>
+        <a href="/profile" class="nav-item">
+            <i class="fas fa-user"></i>
+            <span>Profile</span>
+        </a>
+    </nav>
+
+    <script>
+        // Generate particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.opacity = Math.random() * 0.5;
+                particle.style.width = Math.random() * 3 + 1 + 'px';
+                particle.style.height = particle.style.width;
+                particlesContainer.appendChild(particle);
+            }
         }
-      } catch (error) {
-        msg.className = 'message error';
-        msg.textContent = 'Terjadi kesalahan: ' + error.message;
-        btn.disabled = false;
-      }
-    }
-  </script>
+
+        // Toggle password visibility
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.className = 'far fa-eye-slash';
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.className = 'far fa-eye';
+            }
+        }
+
+        // Show message
+        function showMessage(text, type = 'error') {
+            const msgDiv = document.getElementById('message');
+            msgDiv.style.display = 'flex';
+            msgDiv.className = `message ${type}`;
+            
+            let icon = '';
+            if (type === 'error') icon = 'fa-exclamation-circle';
+            else if (type === 'success') icon = 'fa-check-circle';
+            else icon = 'fa-info-circle';
+            
+            msgDiv.innerHTML = `<i class="fas ${icon}"></i> ${text}`;
+            
+            // Auto hide after 5 seconds
+            setTimeout(() => {
+                msgDiv.style.display = 'none';
+            }, 5000);
+        }
+
+        // Password strength indicator (optional)
+        function checkPasswordStrength() {
+            const password = document.getElementById('password').value;
+            const strengthDiv = document.getElementById('passwordStrength');
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+            
+            if (password.length > 0) {
+                strengthDiv.style.display = 'flex';
+                
+                let strength = 0;
+                if (password.length >= 6) strength += 25;
+                if (password.length >= 8) strength += 25;
+                if (/[A-Z]/.test(password)) strength += 25;
+                if (/[0-9]/.test(password)) strength += 25;
+                if (/[^A-Za-z0-9]/.test(password)) strength += 25;
+                
+                strength = Math.min(strength, 100);
+                strengthFill.style.width = strength + '%';
+                
+                if (strength < 25) strengthText.textContent = 'Lemah';
+                else if (strength < 50) strengthText.textContent = 'Sedang';
+                else if (strength < 75) strengthText.textContent = 'Kuat';
+                else strengthText.textContent = 'Sangat Kuat';
+            } else {
+                strengthDiv.style.display = 'none';
+            }
+        }
+
+        // Login function
+        async function login() {
+            const phone = document.getElementById('phone').value.trim();
+            const password = document.getElementById('password').value;
+            const btn = document.getElementById('loginBtn');
+            
+            // Validate
+            if (!phone || !password) {
+                showMessage('Nomor dan password harus diisi!', 'error');
+                document.querySelector('.glass-card').classList.add('shake');
+                setTimeout(() => {
+                    document.querySelector('.glass-card').classList.remove('shake');
+                }, 500);
+                return;
+            }
+            
+            // Phone number validation (simple)
+            if (!/^\d+$/.test(phone)) {
+                showMessage('Nomor WhatsApp harus berupa angka!', 'error');
+                return;
+            }
+            
+            // Show loading
+            btn.disabled = true;
+            btn.innerHTML = `
+                <div class="loading-spinner"></div>
+                <span>Memproses...</span>
+            `;
+            
+            // Simulate API call (ganti dengan fetch ke backend)
+            setTimeout(() => {
+                // This is where you'd put your actual API call
+                console.log('Login attempt:', { phone, password });
+                
+                // Example success
+                showMessage('Login berhasil! Mengalihkan...', 'success');
+                
+                // Reset button after demo (2 seconds)
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerHTML = `
+                        <span>Login</span>
+                        <i class="fas fa-arrow-right btn-icon"></i>
+                    `;
+                    
+                    // Redirect to dashboard (demo)
+                    // window.location.href = '/dashboard';
+                }, 2000);
+                
+            }, 1500);
+            
+            /* Actual API call (uncomment this):
+            try {
+                const res = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, password })
+                });
+                const data = await res.json();
+                
+                if (data.success) {
+                    localStorage.setItem('token', data.token);
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    showMessage('Login berhasil! Mengalihkan...', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 1000);
+                } else {
+                    showMessage(data.message || 'Login gagal!', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = `
+                        <span>Login</span>
+                        <i class="fas fa-arrow-right btn-icon"></i>
+                    `;
+                }
+            } catch (error) {
+                showMessage('Terjadi kesalahan: ' + error.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = `
+                    <span>Login</span>
+                    <i class="fas fa-arrow-right btn-icon"></i>
+                `;
+            }
+            */
+        }
+
+        // Add active class to current nav item based on path
+        function setActiveNav() {
+            const path = window.location.pathname;
+            const navItems = document.querySelectorAll('.nav-item');
+            
+            navItems.forEach(item => {
+                const href = item.getAttribute('href');
+                if (path === href || (path === '/' && href === '/')) {
+                    item.classList.add('active');
+                } else if (path.startsWith(href) && href !== '/') {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+            setActiveNav();
+            
+            // Password strength listener (optional)
+            document.getElementById('password').addEventListener('input', checkPasswordStrength);
+            
+            // Enter key submit
+            document.getElementById('password').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    login();
+                }
+            });
+            
+            // Auto-format phone input (remove non-digits)
+            document.getElementById('phone').addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+            });
+            
+            // Check for saved credentials (demo)
+            const savedPhone = localStorage.getItem('savedPhone');
+            if (savedPhone) {
+                document.getElementById('phone').value = savedPhone;
+                document.getElementById('remember').checked = true;
+            }
+            
+            // Animate elements on scroll
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            });
+            
+            document.querySelectorAll('.form-group, .options, .login-btn').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'all 0.5s ease';
+                observer.observe(el);
+            });
+        });
+    </script>
 </body>
 </html>
