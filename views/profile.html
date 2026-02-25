@@ -210,7 +210,7 @@
         // Fetch profile data
         async function loadProfile() {
             try {
-                const response = await fetch(`/u/${nickname}`);
+                const response = await fetch(`/u/api/${nickname}`);
                 const data = await response.json();
                 
                 document.getElementById('loading').style.display = 'none';
