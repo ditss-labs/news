@@ -1,4 +1,5 @@
-import express from 'express';
+
+import express from 'express'
 import mongoose from 'mongoose';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
@@ -190,6 +191,6 @@ async function startServer() {
     console.log(chalk.cyan(`📝 API: http://localhost:${PORT}`));
     console.log(chalk.yellow(`💾 Database: ${dbConnected ? 'MongoDB' : 'Failed'}`));
   });
-}
+//}
 
 startServer().catch(console.error);
